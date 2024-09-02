@@ -3,7 +3,7 @@ namespace cei.Models;
 public enum Parties
 {
     ACDP,
-    ActionSA,
+    ACTION_SA,
     ALJAMA,
     ANC,
     ATM,

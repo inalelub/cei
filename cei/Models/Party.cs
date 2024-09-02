@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace cei.Models;
 
@@ -10,8 +11,11 @@ public class Party
     [Key]
     public int Id { get; set; }
     [Required]
+    [Column(Order = 2)]
     public string PartyName { get; set; }
     [Required]
+    [Column(Order = 3)]
     public Parties PartyAbbreviation { get; set; }
+    [Column(Order = 4)]
     public string? PartyUrl { get; set; }
 }

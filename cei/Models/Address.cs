@@ -15,5 +15,6 @@ public class Address
     public string City { get; set; }
     [Required]
     public Provinces Provinces { get; set; }
+    [Required]
     public int ZipCode  { get; set; }
 }
