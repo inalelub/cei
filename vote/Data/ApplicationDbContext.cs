@@ -1,7 +1,7 @@
-using cei.Models;
 using Microsoft.EntityFrameworkCore;
+using vote.Models;
 
-namespace cei.Data;
+namespace vote.Data;
 
 public class ApplicationDbContext : DbContext
 {
