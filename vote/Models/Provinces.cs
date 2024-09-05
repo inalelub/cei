@@ -1,4 +1,4 @@
-namespace cei.Models;
+namespace vote.Models;
 
 public enum Provinces
 {

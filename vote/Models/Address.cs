@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace cei.Models;
+namespace vote.Models;
 
 /// <summary>
 /// Represents the full address of the user

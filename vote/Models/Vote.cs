@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace cei.Models;
+namespace vote.Models;
 
 /// <summary>
 /// Represents a vote count by a user   

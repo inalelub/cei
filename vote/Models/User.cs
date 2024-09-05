@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace cei.Models;
+namespace vote.Models;
 
 /// <summary>
 /// Represents the user who will be voting
