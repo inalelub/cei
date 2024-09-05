@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "cei", "cei\cei.csproj", "{22387E3E-F9F5-4B91-BF0C-C612F00137D9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "vote", "vote\vote.csproj", "{E5472E43-C700-42A6-B5EA-6CBB1FD27794}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{22387E3E-F9F5-4B91-BF0C-C612F00137D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{22387E3E-F9F5-4B91-BF0C-C612F00137D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{22387E3E-F9F5-4B91-BF0C-C612F00137D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5472E43-C700-42A6-B5EA-6CBB1FD27794}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5472E43-C700-42A6-B5EA-6CBB1FD27794}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5472E43-C700-42A6-B5EA-6CBB1FD27794}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5472E43-C700-42A6-B5EA-6CBB1FD27794}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
