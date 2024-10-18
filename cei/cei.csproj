@@ -13,4 +13,8 @@
       <Folder Include="wwwroot\assets\" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Remove="wwwroot\favicon.ico" />
+    </ItemGroup>
+
 </Project>

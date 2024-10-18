@@ -4,6 +4,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>IEC Home - Electoral Commission of South Africa</title>
+    <link rel="icon" type="image/ico" href="favicon.bmp"/>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/cei.styles.css" asp-append-version="true"/>
@@ -13,36 +14,51 @@
     <img src="~/assets/preloader.gif" alt="The loading animation"/>
 </div>
 <header >
-    <nav style="background-color: #0047ba" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light  border-bottom box-shadow mb-3">
-        <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                <img class="logo pt-0" src="assets/cei-logo.svg" alt=""/>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="">Privacy</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+    <div style="background-color: black; height: 120px">
+        <a class="" asp-area="" asp-controller="Home" asp-action="Index">
+            <img class="logo" src="assets/cei-logo.svg" alt=""/>
+        </a>
+    </div>
+    <nav style="background-color: #0047ba; height: 50px" class="">
+        <ul class="">
+            <li class="">
+                <a class="" asp-area="" asp-controller="Home" asp-action="Index">Voters</a>
+            </li>
+            <li class="">
+                <a class="" asp-area="" asp-controller="Home" asp-action="">Parties</a>
+            </li>
+        </ul>
     </nav>
 </header>
-<div class="container">
+
+<div class="">
     <main role="main" class="pb-3">
         @RenderBody()
     </main>
 </div>
 
-<footer class="border-top footer text-muted">
-    <div class="container">
+<footer class="" style="background-color: #0047ba; position: fixed; bottom: 0; left: 0; right: 0">
+    <div class="">
+        <h4>Useful Links</h4>
+        <ul>
+            <li><a href="https://www.cogta.gov.za">Department of Cooperative Governance & Traditional Affairs</a></li>
+            <li><a href="https://www.dha.gov.za">Department of Home Affairs</a></li>
+            <li><a href="https://dirco.gov.za">Department of Internation Relations & Cooperation</a></li>
+            <li><a href="https://www.fpb.gov.za">Film & Publications Board</a></li>
+            <li><a href="https://demarcation.org.za">Municipal Demarcation Board</a></li>
+            <li><a href="https://www.real411.org">Real 411 Report Online Digital Harms</a></li>
+        </ul>
+    </div>
+    <div class="">
+        <h4>Connect with Us</h4>
+        <ul>
+            <li><a href="mailto:info@elections.org"><img src="assets/email.png" alt="An email icon"/></a></li>
+            <li><a href="https://www.facebook.com/IECSouthAfrica"><img src="assets/facebook.png" alt="Facebook icon"/></a></li>
+            <li><a href="https://www.x.com/iecsouthafrica"><img src="assets/twitter.png" alt="Twitter icon"/></a></li>
+            <li><a href="https://www.instagram.com/iecsouthafrica"><img src="assets/instagram.png" alt="Instagram icon"/></a></li>
+            <li><a href="https://wa.me/+27600880000"><img src="assets/whatsapp.png" alt="WhatsApp icon"/></a></li>
+            <li><a href="https://www.youtube.com/user/iecouthafrica"><img src="assets/youtube.png" alt="YouTube icon"/></a></li>
+        </ul>
     </div>
 </footer>
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -52,11 +68,9 @@
 <script>
     $(window).on('load', function () {
             setTimeout(function () {
-
                 $('#preloader').fadeOut('slow');
                 $('.loading-spinner').hide();
             }, 1000);
-    
     })
 </script>
 </body>
