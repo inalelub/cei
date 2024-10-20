@@ -12,6 +12,7 @@ public class Address
     [Required]
     public string Street { get; set; }
     [Required]
+    [MaxLength(256)]
     public string City { get; set; }
     [Required]
     public Provinces Provinces { get; set; }
