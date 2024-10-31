@@ -6,7 +6,7 @@ var connectionString = builder.Configuration.GetConnectionString("LocalConnectio
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<ApplicationDbContext>(optionsAction: options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(optionsAction: options => options.UseLazyLoadingProxies().UseSqlServer(connectionString));
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
 
 var app = builder.Build();
