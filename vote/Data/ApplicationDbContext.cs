@@ -12,13 +12,11 @@ public class ApplicationDbContext :IdentityDbContext<ApplicationUser>
         
     }
     
-    // public DbSet<User> Users { get; set; }
-    // public DbSet<Vote> Votes { get; set; }
-    // public DbSet<Party> Parties { get; set; }
+    public DbSet<Vote> Votes { get; set; }
+    public DbSet<Party> Parties { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        
         base.OnModelCreating(modelBuilder);
         
         // This is the changing of the default table names that identity scaffolds
@@ -41,6 +39,11 @@ public class ApplicationDbContext :IdentityDbContext<ApplicationUser>
             b.Property(u => u.PhoneNumber).HasMaxLength(10).IsRequired().HasColumnOrder(4);
         });
         
+        // Relationships [ApplicationUser & Vote]
+        modelBuilder.Entity<ApplicationUser>().HasOne(v => v.Vote).WithOne(a => a.ApplicationUser).HasForeignKey<Vote>(v => v.ApplicationUserId).IsRequired(false);
+        
+        // Relationships [Party & Vote]
+        modelBuilder.Entity<Party>().HasMany(v => v.Votes).WithOne(a => a.Party).HasForeignKey(a => a.PartyId).IsRequired(false);
+        
     }
-    
 }

@@ -25,7 +25,14 @@ public class ApplicationUser : IdentityUser
     [RegularExpression("^[a-zA-Z\\\\-éèêëÉÈÊË]+$")]
     public string LastName { get; set; }
     
-    // [Required]
     [Column(Order = 4)]
     public Address Address { get; set; }
+    
+    [Column(Order = 5)]
+    public bool HasVoted { get; set; }
+    
+    // Relationship between ApplicationUser & Vote [One-To-One : Each voter can have only one vote & each vote belongs to exactly one voter]
+    
+    public virtual Vote? Vote { get; set; }
+    
 }
