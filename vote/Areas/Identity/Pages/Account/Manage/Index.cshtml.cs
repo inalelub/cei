@@ -1,5 +1,6 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
+
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using vote.Data;
+using vote.Models;
 
 namespace vote.Areas.Identity.Pages.Account.Manage
 {
@@ -54,8 +56,25 @@ namespace vote.Areas.Identity.Pages.Account.Manage
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Phone]
-            [Display(Name = "Phone number")]
+            [Display(Name = "Phone Number")]
             public string PhoneNumber { get; set; }
+
+            [Required]
+            [Display(Name = "Identity Number")]
+            public string IdentityNumber { get; set; }
+
+            [Required]
+            [Display(Name = "First Name(s)")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [Display(Name = "Last Name / Surname")]
+            public string LastName { get; set; }
+
+            // TODO: Fix how you would implement the Address 
+            // [Required]
+            // [Display(Name = "Address")]
+            // public Address Address { get; set; }
         }
 
         private async Task LoadAsync(ApplicationUser applicationUser)
@@ -67,7 +86,12 @@ namespace vote.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                IdentityNumber = applicationUser.IdentityNumber,
+                FirstName = applicationUser.FirstName,
+                LastName = applicationUser.LastName,
+                // TODO: Fix how you would implement the Address 
+                // Address = applicationUser.Address
             };
         }
 
@@ -108,6 +132,29 @@ namespace vote.Areas.Identity.Pages.Account.Manage
                 }
             }
 
+            // Updating my ApplicationUser with my Input.Model names for updating their names
+            if (Input.FirstName != user.FirstName)
+            {
+                user.FirstName = Input.FirstName;
+            }
+
+            if (Input.LastName != user.LastName)
+            {
+                user.LastName = Input.LastName;
+            }
+
+            if (Input.IdentityNumber != user.IdentityNumber)
+            {
+                user.IdentityNumber = Input.IdentityNumber;
+            }
+
+            // TODO: Fix how you would implement the Address 
+            // if (Input.Address != user.Address)
+            // {
+            //     user.Address = Input.Address;
+            // }
+
+            await _userManager.UpdateAsync(user);
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
