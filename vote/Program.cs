@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using vote.Data;
 
@@ -8,6 +9,16 @@ var connectionString = builder.Configuration.GetConnectionString("LocalConnectio
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(optionsAction: options => options.UseLazyLoadingProxies().UseSqlServer(connectionString));
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Requires each user to have a unique email
+    options.User.RequireUniqueEmail = true;
+});
+// builder.Services.AddAuthorization(options =>
+// {
+//     // This authorization policy requires all users to be authenticated, except for Razor Pages, controllers, or action methods with an authorization attribute.
+//     options.FallbackPolicy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+// });
 
 var app = builder.Build();
 
@@ -24,6 +35,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
