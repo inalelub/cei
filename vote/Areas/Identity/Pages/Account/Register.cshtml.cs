@@ -81,6 +81,29 @@ namespace vote.Areas.Identity.Pages.Account
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
+            
+            [Required(ErrorMessage =
+                "First name is required. You must enter your first names as they appear on your ID document.")]
+            [MaxLength(128)]
+            [Display(Name = "First Name(s)")]
+            [RegularExpression("^[a-zA-Z\\\\-éèêëÉÈÊË]+$")]
+            public string FirstName { get; set; }
+
+            [Required(ErrorMessage =
+                "Last name is required. You must enter your last name as they appear on your ID document.")]
+            [MaxLength(128)]
+            [Display(Name = "Last Name")]
+            [RegularExpression("^[a-zA-Z\\\\-éèêëÉÈÊË]+$")]
+            public string LastName { get; set; }
+            
+            [Required]
+            [Display(Name = "Identity Number")]
+            [MaxLength(13, ErrorMessage = "You must enter your 13-digit South African ID number")]
+            // [RegularExpression(@"(((\d{2}((0[013578]|1[02])(0[1-9]|[12]\d|3[01])|(0[13456789]|1[012])(0[1-9]|[12]\d|30)|02(0[1-9]|1\d|2[0-8])))|([02468][048]|[13579][26])0229))(( |-)(\d{4})( |-)([01]8((( |-)\d{1})|\d{1}))|(\d{4}[01]8\d{1}))", ErrorMessage = "ID Number must be in format yy/mm/dd")]
+            public string IdentityNumber { get; set; }
+
+            // TODO: Try to find a way to implement the address here
+            // public Address Address { get; set; }
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -101,8 +124,8 @@ namespace vote.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
-        }
 
+        }
 
         public async Task OnGetAsync(string returnUrl = null)
         {
@@ -117,6 +140,11 @@ namespace vote.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+                
+                user.FirstName = Input.FirstName;
+                user.LastName = Input.LastName;
+                user.IdentityNumber = Input.IdentityNumber;
+                // user.Address = Input.Address;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
