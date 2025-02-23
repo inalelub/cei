@@ -25,8 +25,9 @@ public class ApplicationUser : IdentityUser
     [RegularExpression("^[a-zA-Z\\\\-éèêëÉÈÊË]+$")]
     public string LastName { get; set; }
     
-    [Column(Order = 4)]
-    public Address Address { get; set; }
+    // TODO: Fix how you would implement the Address 
+    // [Column(Order = 4)]
+    // public Address Address { get; set; }
     
     [Column(Order = 5)]
     public bool HasVoted { get; set; }

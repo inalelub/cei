@@ -13,7 +13,7 @@ public class Vote
     
     // Relationship between ApplicationUser & Vote [One-To-One : Each voter can have only one vote & each vote belongs to exactly one voter]
     
-    public int? ApplicationUserId { get; set; } // optional foreign key property
+    public string? ApplicationUserId { get; set; } // optional foreign key property
     public virtual ApplicationUser? ApplicationUser { get; set; } // optional reference navigation to principal
     
     // Relationship between Party & Vote [One-To-Many : One party can receive many votes but each vote is cast for exactly one party]
