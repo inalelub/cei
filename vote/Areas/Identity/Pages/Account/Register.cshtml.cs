@@ -102,6 +102,11 @@ namespace vote.Areas.Identity.Pages.Account
             // [RegularExpression(@"(((\d{2}((0[013578]|1[02])(0[1-9]|[12]\d|3[01])|(0[13456789]|1[012])(0[1-9]|[12]\d|30)|02(0[1-9]|1\d|2[0-8])))|([02468][048]|[13579][26])0229))(( |-)(\d{4})( |-)([01]8((( |-)\d{1})|\d{1}))|(\d{4}[01]8\d{1}))", ErrorMessage = "ID Number must be in format yy/mm/dd")]
             public string IdentityNumber { get; set; }
 
+            [Required]
+            [Display(Name = "Phone Number")]
+            [MaxLength(10)]
+            public string PhoneNumber { get; set; }
+
             // TODO: Try to find a way to implement the address here
             // public Address Address { get; set; }
 
@@ -144,6 +149,7 @@ namespace vote.Areas.Identity.Pages.Account
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
                 user.IdentityNumber = Input.IdentityNumber;
+                user.PhoneNumber = Input.PhoneNumber;
                 // user.Address = Input.Address;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);

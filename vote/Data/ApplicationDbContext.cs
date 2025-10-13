@@ -5,13 +5,8 @@ using vote.Models;
 
 namespace vote.Data;
 
-public class ApplicationDbContext :IdentityDbContext<ApplicationUser> 
+public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options) 
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-        
-    }
-    
     public DbSet<Vote> Votes { get; set; }
     public DbSet<Party> Parties { get; set; }
 
