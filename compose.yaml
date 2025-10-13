@@ -1,0 +1,29 @@
+services:
+  vote:
+    image: cei-vote:latest
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+        db:
+            condition: service_healthy
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: always
+    volumes:
+      - sqlvolume:/var/opt/mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${DBPASSWORD}
+    ports:
+      - 1433:1433
+    healthcheck:
+        test: /opt/mssql-tool18/bin/sqlcmd -S localhost -U sa -P "${DBPASSWORD}" -C -Q "SELECT 1" || exit 1
+        interval: 10s
+        timeout: 3s
+        retries: 10
+        start_period: 10s
+
+volumes:
+  sqlvolume:
+
