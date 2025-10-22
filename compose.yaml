@@ -1,12 +1,4 @@
 services:
-  vote:
-    image: cei-vote:latest
-    restart: always
-    ports:
-      - 8080:8080
-    depends_on:
-        db:
-            condition: service_healthy
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     restart: always
