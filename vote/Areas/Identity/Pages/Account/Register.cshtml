@@ -4,59 +4,195 @@
     ViewData["Title"] = "Register";
 }
 
-<h1>@ViewData["Title"]</h1>
+<!-- MultiStep Form -->
+<div class="container-fluid" id="grad1">
+    <div class="row justify-content-center mt-0">
+        <div class="col-11 col-sm-9 col-md-7 col-lg-6 text-center p-0 mt-3 mb-2">
+            <div class="card px-0 pt-4 pb-0 mt-3 mb-3">
+                <h2><strong>@ViewData["Title"]</strong></h2>
+                <p>Create a new account</p>
+                <div class="row">
+                    <div class="col-md-12 mx-0">
+                        <form id="msform" asp-route-returnUrl="@Model.ReturnUrl" method="post">
 
-<div class="row">
-    <div class="col-md-4">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.IdentityNumber" class="form-control" autocomplete="username" aria-required="true" placeholder="0000000000000" />
-                <label asp-for="Input.IdentityNumber">Identity Number</label>
-                <span asp-validation-for="Input.IdentityNumber" class="text-danger"></span>
+                            <!-- progressbar -->
+                            <ul id="progressbar">
+                                <li class="active" id="account"><strong>Account</strong></li>
+                                <li id="personal"><strong>Personal</strong></li>
+                                <li id="address"><strong>Address</strong></li>
+                            </ul>
+
+                            <!-- fieldsets -->
+                            <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title">Account Information</h2>
+									<div class="form-floating mb-3">
+										<input asp-for="Input.Email" type="email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+										<label asp-for="Input.Email">Email</label>
+										<span asp-validation-for="Input.Email" class="text-danger"></span>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" />
+										<label asp-for="Input.Password">Password</label>
+										<span asp-validation-for="Input.Password" class="text-danger"></span>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true"/>
+										<label asp-for="Input.ConfirmPassword">Confirm Password</label>
+										<span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+									</div>
+                                </div>
+                                <input type="button" name="next" class="next action-button" value="Next Step" />
+                            </fieldset>
+
+                            <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title">Personal Information</h2>
+
+									<div class="form-floating mb-3">
+										<input asp-for="Input.IdentityNumber" class="form-control" autocomplete="off" aria-required="true" placeholder="0000000000000" />
+										<label asp-for="Input.IdentityNumber">Identity Number</label>
+										<span asp-validation-for="Input.IdentityNumber" class="text-danger"></span>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="Input.FirstName" class="form-control" autocomplete="firstname" aria-required="true" placeholder="John" />
+										<label asp-for="Input.FirstName">First Name(s)</label>
+										<span asp-validation-for="Input.FirstName" class="text-danger"></span>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="Input.LastName" class="form-control" autocomplete="lastname" aria-required="true" placeholder="Doe" />
+										<label asp-for="Input.LastName">Last Name</label>
+										<span asp-validation-for="Input.LastName" class="text-danger"></span>
+									</div>
+
+									<div class="form-floating mb-3">
+										<input asp-for="Input.PhoneNumber" class="form-control" autocomplete="tel" aria-required="true" placeholder="0725891454" />
+										<label asp-for="Input.PhoneNumber">Phone Number</label>
+										<span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+									</div>
+
+                                </div>
+                                <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
+                                <input type="button" name="next" class="next action-button" value="Next Step" />
+                            </fieldset>
+
+                            <fieldset>
+                                <div class="form-card">
+                                    <h2 class="fs-title">Address Information</h2>
+									<div class="form-floating mb-3">
+										<input asp-for="Input.Street" class="form-control" aria-required="true" autocomplete="street-address" placeholder="5372 Saint Street" />
+										<label asp-for="Input.Street">Street Name</label>
+										<span asp-validation-for="Input.Street" class="text-danger"></span>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="Input.Suburb" class="form-control" aria-required="true" autocomplete="address-level2" placeholder="Linden" />
+										<label asp-for="Input.Suburb">Suburb</label>
+										<span asp-validation-for="Input.Suburb" class="text-danger"></span>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="Input.City" class="form-control" aria-required="true" autocomplete="address-level2" placeholder="Johannesburg" />
+										<label asp-for="Input.City">City</label>
+										<span asp-validation-for="Input.City" class="text-danger"></span>
+									</div>
+									<div class="form-floating mb-3">
+										<select asp-for="Input.Province" class="form-control" aria-required="true" >
+											<option selected></option>
+											<option value="0">Limpopo</option>
+											<option value="1">Gauteng</option>
+											<option value="2">Mpumalanga</option>
+											<option value="3">Kwa-Zulu Natal</option>
+											<option value="4">Eastern Cape</option>
+											<option value="5">Western Cape</option>
+											<option value="6">Northern Cape</option>
+											<option value="7">North West</option>
+											<option value="8">Free State</option>
+										</select>
+										<label asp-for="Input.Province">Province</label>
+										<span asp-validation-for="Input.Province" class="text-danger"></span>
+									</div>
+									<div class="form-floating mb-3">
+										<input asp-for="Input.ZipCode" class="form-control" aria-required="true" autocomplete="postal-code" placeholder="0001" />
+										<label asp-for="Input.ZipCode">Zip Code</label>
+										<span asp-validation-for="Input.ZipCode" class="text-danger"></span>
+									</div>
+								</div>
+                                <input type="button" name="previous" class="previous action-button-previous" value="Previous" />
+								<button id="registerSubmit" type="submit" class="next action-button">Register</button>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.FirstName" class="form-control" autocomplete="firstname" aria-required="true" placeholder="John" />
-                <label asp-for="Input.FirstName">First Name(s)</label>
-                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.LastName" class="form-control" autocomplete="lastname" aria-required="true" placeholder="Doe" />
-                <label asp-for="Input.LastName">Last Name</label>
-                <span asp-validation-for="Input.LastName" class="text-danger"></span>
-            </div>
-            @* <div class="form-floating mb-3"> *@
-            @*     <input asp-for="Input.Address" class="form-control" autocomplete="username" aria-required="true" /> *@
-            @*     <label asp-for="Input.Address">Address</label> *@
-            @*     <span asp-validation-for="Input.Address" class="text-danger"></span> *@
-            @* </div> *@
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="phonenumber" aria-required="true" placeholder="0725891454" />
-                <label asp-for="Input.PhoneNumber">Phone Number</label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+	
+    <script>
+	    $(document).ready(function(){
+    
+		    var current_fs, next_fs, previous_fs; //fieldsets
+		    var opacity;
+
+		    $(".next").click(function(){
+    
+			    current_fs = $(this).parent();
+			    next_fs = $(this).parent().next();
+    
+			    //Add Class Active
+			    $("#progressbar li").eq($("fieldset").index(next_fs)).addClass("active");
+    
+			    //show the next fieldset
+			    next_fs.show(); 
+			    //hide the current fieldset with style
+			    current_fs.animate({opacity: 0}, {
+				    step: function(now) {
+					    // for making fieldset appear animation
+					    opacity = 1 - now;
+
+					    current_fs.css({
+						    'display': 'none',
+						    'position': 'relative'
+					    });
+					    next_fs.css({'opacity': opacity});
+				    }, 
+				    duration: 600
+			    });
+		    });
+
+		    $(".previous").click(function(){
+    
+			    current_fs = $(this).parent();
+			    previous_fs = $(this).parent().prev();
+    
+			    //Remove class active
+			    $("#progressbar li").eq($("fieldset").index(current_fs)).removeClass("active");
+    
+			    //show the previous fieldset
+			    previous_fs.show();
+
+			    //hide the current fieldset with style
+			    current_fs.animate({opacity: 0}, {
+				    step: function(now) {
+					    // for making fieldset appear animation
+					    opacity = 1 - now;
+
+					    current_fs.css({
+						    'display': 'none',
+						    'position': 'relative'
+					    });
+					    previous_fs.css({'opacity': opacity});
+				    }, 
+				    duration: 600
+			    });
+		    });
+
+		    $(".submit").click(function() {
+			    return false;
+		    });
+
+	    });
+    </script>
 }

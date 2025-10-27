@@ -73,10 +73,6 @@ namespace vote.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [Required]
             [EmailAddress]
             [Display(Name = "Email")]
@@ -86,34 +82,49 @@ namespace vote.Areas.Identity.Pages.Account
                 "First name is required. You must enter your first names as they appear on your ID document.")]
             [MaxLength(128)]
             [Display(Name = "First Name(s)")]
-            [RegularExpression("^[a-zA-Z\\\\-éèêëÉÈÊË]+$")]
+            [RegularExpression(@"^[a-zA-Z\-éèêëÉÈÊË\s]+$", ErrorMessage = "Only letters, hyphens and spaces allowed")] 
             public string FirstName { get; set; }
 
             [Required(ErrorMessage =
                 "Last name is required. You must enter your last name as they appear on your ID document.")]
             [MaxLength(128)]
             [Display(Name = "Last Name")]
-            [RegularExpression("^[a-zA-Z\\\\-éèêëÉÈÊË]+$")]
+            [RegularExpression(@"^[a-zA-Z\-éèêëÉÈÊË\s]+$", ErrorMessage = "Only letters, hyphens and spaces allowed")] 
             public string LastName { get; set; }
-            
+
             [Required]
             [Display(Name = "Identity Number")]
-            [MaxLength(13, ErrorMessage = "You must enter your 13-digit South African ID number")]
-            // [RegularExpression(@"(((\d{2}((0[013578]|1[02])(0[1-9]|[12]\d|3[01])|(0[13456789]|1[012])(0[1-9]|[12]\d|30)|02(0[1-9]|1\d|2[0-8])))|([02468][048]|[13579][26])0229))(( |-)(\d{4})( |-)([01]8((( |-)\d{1})|\d{1}))|(\d{4}[01]8\d{1}))", ErrorMessage = "ID Number must be in format yy/mm/dd")]
+            [StringLength(13, MinimumLength = 13, ErrorMessage = "ID number must be exactly 13 digits")]
+            [RegularExpression(@"^\d{13}$", ErrorMessage = "ID number must contain only digits")]
             public string IdentityNumber { get; set; }
 
             [Required]
             [Display(Name = "Phone Number")]
-            [MaxLength(10)]
+            [StringLength(10, MinimumLength = 10, ErrorMessage = "Phone number must be 10 digits")]
+            [RegularExpression(@"^0\d{9}$", ErrorMessage = "Phone number must start with 0 and be 10 digits")]
             public string PhoneNumber { get; set; }
 
-            // TODO: Try to find a way to implement the address here
-            // public Address Address { get; set; }
+            [Required]
+            [Display(Name = "Street Name")]
+            public string Street { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+            [Required]
+            [Display(Name = "Suburb")]
+            public string Suburb { get; set; }
+
+            [Required]
+            [Display(Name = "City")]
+            public string City { get; set; }
+
+            [Required]
+            public Provinces Province { get; set; }
+
+            [Required]
+            [Display(Name = "Zip Code")]
+            [StringLength(4, MinimumLength = 4, ErrorMessage = "Zip code must be 4 digits")]
+            [RegularExpression(@"^\d{4}$", ErrorMessage = "Zip code must be numeric")]
+            public string ZipCode { get; set; }
+
             [Required]
             [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
                 MinimumLength = 6)]
@@ -121,10 +132,6 @@ namespace vote.Areas.Identity.Pages.Account
             [Display(Name = "Password")]
             public string Password { get; set; }
 
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
@@ -150,7 +157,14 @@ namespace vote.Areas.Identity.Pages.Account
                 user.LastName = Input.LastName;
                 user.IdentityNumber = Input.IdentityNumber;
                 user.PhoneNumber = Input.PhoneNumber;
-                // user.Address = Input.Address;
+                user.Address = new Address
+                {
+                    Street = Input.Street,
+                    Suburb = Input.Suburb,
+                    City = Input.City,
+                    Province = Input.Province,
+                    ZipCode = Input.ZipCode
+                };
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

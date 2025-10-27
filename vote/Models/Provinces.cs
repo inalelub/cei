@@ -9,5 +9,6 @@ public enum Provinces
     EC,
     WC,
     NC,
-    NW
+    NW,
+    FS
 }
