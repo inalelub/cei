@@ -39,6 +39,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         
         // Relationships [Party & Vote]
         modelBuilder.Entity<Party>().HasMany(v => v.Votes).WithOne(a => a.Party).HasForeignKey(a => a.PartyId).IsRequired(false);
-        
+
+        // Seed the parties data
+        DatabaseSeeder.SeedParties(modelBuilder);
     }
+
 }
