@@ -21,8 +21,11 @@ public class Party
     [MaxLength(50)]
     public Parties PartyAbbreviation { get; set; }
     
+    // TODO: Fix some of the URLS
     [Column(Order = 3)]
     public string? PartyUrl { get; set; }
+
+    // TODO: Implement a logo url for parties that means a new property
     
     // Relationship between Party & Vote [One-To-Many : One party can receive many votes but each vote is cast for exactly one party]
    

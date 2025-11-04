@@ -96,6 +96,7 @@ namespace vote.Areas.Identity.Pages.Account
             [Display(Name = "Identity Number")]
             [StringLength(13, MinimumLength = 13, ErrorMessage = "ID number must be exactly 13 digits")]
             [RegularExpression(@"^\d{13}$", ErrorMessage = "ID number must contain only digits")]
+            // TODO: Implement a regular expression that checks if it goes according to the SA standards
             public string IdentityNumber { get; set; }
 
             [Required]

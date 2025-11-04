@@ -14,6 +14,7 @@ public class HomeController : Controller
         _logger = logger;
     }
 
+    // TODO: Implement a new layout for the registration page / edit the default layout
     public IActionResult Index()
     {
         return View();
