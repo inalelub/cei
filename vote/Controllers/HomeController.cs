@@ -17,12 +17,11 @@ public class HomeController : Controller
     // TODO: Implement a new layout for the registration page / edit the default layout
     public IActionResult Index()
     {
-        return View();
-    }
+        if (User.Identity.IsAuthenticated)
+        {
+            return RedirectToAction("Index", "Voting");
+        }
 
-    [Authorize]
-    public IActionResult Privacy()
-    {
         return View();
     }
 
