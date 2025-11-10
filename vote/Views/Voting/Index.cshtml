@@ -4,7 +4,6 @@
 
 }
 
-
 <div class="voting-container">
 	<div class="header-box">
 		<div class="header-icon">
@@ -17,26 +16,29 @@
 	<div class="alert-info-custom">
 		<strong>Important:</strong> Please review your selection carefully before submitting. Your vote is confidential and cannot be changed once submitted.
 	</div>
-
-	<form>
-		@foreach (var item in Model)
-		{
-			<div class="party-card">
-				<input type="radio" name="party" id="da" value="da" class="party-radio">
-				<a href="@item.PartyUrl" target="_blank" >
-					<img src="https://udm.org.za/uploads/web/logo/udm-horizontal-logo.png"  class="party-logo"alt=""/>
-				</a>
-				<div class="party-info" style="margin-left: 7px">
-					<div class="party-name">@item.PartyName</div>
-					<div class="party-abbr">@item.PartyAbbreviation</div>
+	
+	
+	@Html.BeginForm(actionName: "VoteResult", controllerName: "Voting", FormMethod.Post) {
+			@foreach (var item in Model)
+			{
+				<div class="party-card">
+					<input type="radio" name="party" value="@item.Id" class="party-radio">
+					<a href="@item.PartyUrl" target="_blank" >
+						<img src="@item.LogoUrl" class="party-logo" alt="The logo for @item.PartyName"/>
+					</a>
+					<div class="party-info" style="margin-left: 7px">
+						<div class="party-name">@item.PartyName</div>
+						<div class="party-abbr">@item.PartyAbbreviation</div>
+					</div>
 				</div>
-			</div>
-		}
+			}
 
-		<div class="submit-section text-center">
-			<button type="submit" class="btn btn-success btn-submit" id="submitBtn" disabled>
-				<i class="fas fa-check-circle me-2"></i>Submit Vote
-			</button>
-		</div>
-	</form>
+			<div class="submit-section text-center">
+				<button type="submit" class="btn btn-success btn-submit w-75 p-3" id="submitBtn" >
+					<i class="fas fa-check-circle me-2"></i>Submit Vote
+				</button>
+				<a asp-action="Index" asp-controller="Home" class="btn btn-secondary p-3">Cancel</a>
+			</div>
+	}
+
 </div>

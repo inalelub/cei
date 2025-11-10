@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using vote.Data;
+using vote.Models;
 
 namespace vote.Controllers
 {
     public class VotingController : Controller
     {
         private readonly ApplicationDbContext _db;
-    private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<HomeController> _logger;
 
         public VotingController(ApplicationDbContext context, ILogger<HomeController> logger)
         {
@@ -23,6 +24,33 @@ namespace vote.Controllers
             return View(parties);
         }
 
-        // TODO: Implement a method that saves your vote & then redirects to a confirmation screen
+        [HttpPost]
+        public IActionResult VoteResult(int? party)
+        {
+            var userEmail = User.Identity?.Name;
+            var registeredUser = _db.Users?.FirstOrDefault(u => u.Email == userEmail);
+
+            if (registeredUser is null || party is null)
+            {
+                return NotFound();
+            }
+
+            if (registeredUser.HasVoted)
+            {
+                return Conflict("The user has voted");
+            }
+
+            var newVote = new Vote
+            {
+                ApplicationUserId = registeredUser.Id,
+                PartyId = party.Value
+            };
+
+            _db.Votes.Add(newVote);
+            registeredUser.HasVoted = true;
+            _db.SaveChanges();
+
+            return View();
+        }
     }
 }
