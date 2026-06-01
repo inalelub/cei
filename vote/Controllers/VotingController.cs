@@ -25,6 +25,7 @@ namespace vote.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult VoteResult(int? party)
         {
             var userEmail = User.Identity?.Name;
