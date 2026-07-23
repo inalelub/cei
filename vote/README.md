@@ -1,2 +1,0 @@
-<h1 style="text-align: center">Vote</h1>
-<p style="text-align: center">This is the voting side of the whole project. It is the website that allows users to register & be able to vote online on the site.</p>
