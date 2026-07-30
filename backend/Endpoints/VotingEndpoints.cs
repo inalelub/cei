@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using backend.Data;
 using backend.Models;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Endpoints;
@@ -10,25 +10,31 @@ public static class VotingEndpoints
 {
     public static void MapVotingEndpoints(this WebApplication app)
     {
-        app.MapGet("/parties", async (ApplicationDbContext db) =>
+        var group = app.MapGroup("/api/voting").RequireAuthorization();
+
+        group.MapGet("/parties", GetAllParties);
+        group.MapPost("/votes", NewVote);
+        group.MapGet("/results", GetVotingResults);
+
+        static async Task<IResult> GetAllParties(ApplicationDbContext db)
         {
             var parties = await db.Parties.ToListAsync();
-            return Results.Ok(parties);
-        });
+            return TypedResults.Ok(parties);
+        }
 
-        app.MapPost("/votes", [Authorize] async (int? partyId, ApplicationDbContext db, ClaimsPrincipal user) =>
+        static async Task<IResult> NewVote(ApplicationDbContext db, ClaimsPrincipal user, [FromQuery] int? partyId)
         {
             var userEmail = user.Identity?.Name;
             var registeredUser = await db.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
 
             if (registeredUser is null || partyId is null)
             {
-                return Results.NotFound();
+                return TypedResults.NotFound();
             }
 
             if (registeredUser.HasVoted)
             {
-                return Results.Conflict("The user has voted");
+                return TypedResults.Conflict("The user has voted");
             }
 
             var newVote = new Vote
@@ -41,13 +47,14 @@ public static class VotingEndpoints
             registeredUser.HasVoted = true;
 
             await db.SaveChangesAsync();
-            return Results.Created();
-        });
-
-        app.MapGet("/results", [Authorize] async (ApplicationDbContext db) =>
+            return Results.Created();           
+        }
+        
+        static async Task<IResult> GetVotingResults(ApplicationDbContext db)
         {
-            var results = await db.Votes.GroupBy(v => v.PartyId).Select(g => new { PartyId = g.Key, VoteCount = g.Count() }).ToListAsync();
-            return Results.Ok(results);
-        });
+            var results = await db.Votes.GroupBy(v => v.PartyId)
+                .Select(g => new { PartyId = g.Key, VoteCount = g.Count() }).ToListAsync();
+            return TypedResults.Ok(results);
+        }
     }
 }
