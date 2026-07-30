@@ -32,7 +32,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             b.Property(u => u.NormalizedUserName).HasMaxLength(128);
             b.Property(u => u.Email).HasMaxLength(128);
             b.Property(u => u.NormalizedEmail).HasMaxLength(128);
-            b.Property(u => u.PhoneNumber).HasMaxLength(10).IsRequired().HasColumnOrder(4);
+            b.Property(u => u.PhoneNumber).HasMaxLength(10).IsRequired();
+            b.Property(u => u.IdentityNumber).HasMaxLength(13).IsRequired();
+            b.Property(u => u.FirstName).HasMaxLength(128).IsRequired();
+            b.Property(u => u.LastName).HasMaxLength(128).IsRequired();
         });
 
         modelBuilder.Entity<Address>(b =>
