@@ -1,60 +1,64 @@
 'use server'
 
-import { FormState, RegisterFormScheme } from "@/lib/definitions";
+import { RegisterFormState, RegisterFormScheme, LoginFormState } from "@/lib/definitions";
 import { redirect } from "next/navigation";
 
-export async function login(formData: FormData) {
-
-    const username = formData.get('username');
-    const password = formData.get('password');
+export async function login(prevState: LoginFormState, formData: FormData) {
 
     const response = await fetch('http://localhost:5102/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify(Object.fromEntries(formData)),
         credentials: 'include'
     })
     
     if (!response.ok) {
-        // TODO: Handle error response properly and return errors to the form or the UI to show the login was unsuccessful.
-        throw new Error(response.statusText || 'Login failed');
+        return {
+            error: "Invalid username or password",
+            message: "Login failed"
+        }
     }
 
     redirect("/log-success")
 }
 
-export async function register(state: FormState, formData: FormData) {
+export async function register(prevState: RegisterFormState, formData: FormData) {
+
+    const values = {
+        username: String(formData.get('username') ?? ""),
+        email: String(formData.get('email') ?? ""),
+        firstname: String(formData.get('firstname') ?? ""),
+        lastname: String(formData.get('lastname') ?? ""),
+        identitynumber: String(formData.get('identitynumber') ?? ""),
+        phonenumber: String(formData.get('phonenumber') ?? ""),
+        password: String(formData.get('password') ?? ""),
+    }
 
     // Validate form inputs
-    const validatedForm = RegisterFormScheme.safeParse({
-        username: formData.get('username'),
-        email: formData.get('email'),
-        firstname: formData.get('firstname'),
-        lastname: formData.get('lastname'),
-        identitynumber: formData.get('identitynumber'),
-        phonenumber: formData.get('phonenumber'),
-        password: formData.get('password'),
-    })
+    const validatedForm = RegisterFormScheme.safeParse(Object.fromEntries(formData));
 
     // If validation fails, return the errors to the form
     if (!validatedForm.success) {
-        const errors = validatedForm.error.flatten().fieldErrors;
-        return { errors }
+        return {
+            errors: validatedForm.error.flatten().fieldErrors,
+            values,
+        }
     }
-
-    const { username, email, firstname, lastname, identitynumber, phonenumber, password } = validatedForm.data;
 
     const response = await fetch('http://localhost:5102/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, email, firstname, lastname, identitynumber, phonenumber, password }),
+        body: JSON.stringify(validatedForm.data),
         credentials: 'include'
     })
 
-    // TODO: Handle error response properly and return errors to the form or the UI to show the login was unsuccessful.
     if (!response.ok) {
         const errorData = await response.json();
-        return { errors: errorData.errors, message: errorData.message }
+        return { 
+            errors: errorData.errors ?? {}, 
+            values,
+            message: errorData.message ?? "Registration failed" 
+        }
     }
 
     redirect("/reg-success")

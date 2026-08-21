@@ -12,17 +12,30 @@ export const RegisterFormScheme = z.object({
     .regex(/[0-9]/, { error: 'Contain at least one number.' })
     .regex(/[^a-zA-Z0-9]/, { error: 'Contain at least one special character.', }).trim(),
 })
- 
-export type FormState = | {
-      errors?: {
-        username?: string[]
-        email?: string[]
-        firstname?: string[]
-        surname?: string[]
-        id?: string[]
-        phone?: string[]
-        password?: string[]
 
-      }
-      message?: string
-    } | undefined
+export type RegisterFormState = {
+  errors?: {
+    username?: string[]
+    email?: string[]
+    firstname?: string[]
+    lastname?: string[]
+    identitynumber?: string[]
+    phonenumber?: string[]
+    password?: string[]
+  }
+  values: {
+    username: string
+    email: string
+    firstname: string
+    lastname: string
+    identitynumber: string
+    phonenumber: string
+    password: string
+  }
+  message?: string
+}
+
+export type LoginFormState = {
+  error?: string
+  message?: string
+}

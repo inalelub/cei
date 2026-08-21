@@ -18,8 +18,16 @@ import {
 import Link from 'next/link'
 import { Input } from "@/components/ui/input"
 import { login } from "@/app/actions/auth"
+import { useActionState } from "react"
+import { LoginFormState } from "@/lib/definitions"
+
+const initialState: LoginFormState = {
+  error: ''
+}
 
 export function LoginForm({className, ...props}: React.ComponentProps<"div">) {
+
+  const [state, action, pending] = useActionState(login, initialState);
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
@@ -31,7 +39,7 @@ export function LoginForm({className, ...props}: React.ComponentProps<"div">) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={login}>
+          <form action={action}>
             <FieldGroup>
               <Field>
                 <FieldLabel htmlFor="username">Username / Email</FieldLabel>
@@ -49,11 +57,14 @@ export function LoginForm({className, ...props}: React.ComponentProps<"div">) {
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" name="password" />
+                <Input 
+                id="password" 
+                type="password" 
+                name="password" />
               </Field>
               <Field>
                 <Button type="submit">Login</Button>
-                {/* {error ? <p className="text-sm text-red-600">{error}</p> : null} */}
+                {state?.error ? <p className="text-sm text-red-600 text-center">{state?.error}</p> : null}
                 <FieldDescription className="text-center">
                   Don&apos;t have an account? <Link href={'/register'}>Sign up</Link> 
                 </FieldDescription>
