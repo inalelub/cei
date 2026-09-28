@@ -2,10 +2,11 @@
 
 import { RegisterFormState, RegisterFormScheme, LoginFormState } from "@/lib/definitions";
 import { redirect } from "next/navigation";
+import { API_BASE_URL } from "@/lib/api";
 
 export async function login(prevState: LoginFormState, formData: FormData) {
 
-    const response = await fetch('http://localhost:5102/api/auth/login', {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(Object.fromEntries(formData)),
@@ -45,7 +46,7 @@ export async function register(prevState: RegisterFormState, formData: FormData)
         }
     }
 
-    const response = await fetch('http://localhost:5102/api/auth/register', {
+    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(validatedForm.data),
