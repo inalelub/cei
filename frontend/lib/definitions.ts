@@ -39,3 +39,12 @@ export type LoginFormState = {
   error?: string
   message?: string
 }
+
+export type PartyDefinition = {
+  id: number
+  partyName?: string
+  name?: string
+  partyAbbreviation?: string | number
+  partyUrl?: string | null
+  logoUrl?: string | null
+}
