@@ -21,22 +21,34 @@ This project implements a secure voting system with user registration, authentic
 
 ### Authentication (`/api/auth`)
 
-All endpoints except register and login require authorization.
+Registration, login, email confirmation, and password recovery endpoints are public. Logout and profile endpoints require authorization.
 
 - **POST** `/api/auth/register` - Register a new user
-  - Requires: `UserName`, `Email`, `Password`, `FirstName`, `LastName`, `IdentityNumber`, `PhoneNumber`
+  - Requires: `Email`, `Password`, `FirstName`, `LastName`, `IdentityNumber`
+  - Optional: `UserName` (defaults to the email address), `PhoneNumber`, `Address`
+  - Sends an email confirmation link; the account cannot sign in until the email is confirmed
   - Returns: User ID and Email
 
 - **POST** `/api/auth/login` - Authenticate user
   - Requires: `UserName`, `Password`
-  - Returns: Authentication status
+  - Requires a confirmed email address
+  - Returns: Authentication status and establishes an authentication cookie
 
 - **POST** `/api/auth/logout` - Sign out (requires authorization)
   - Returns: Success status
 
+- **GET** `/api/auth/confirm-email?email={email}&token={token}` - Confirm an email address
+- **POST** `/api/auth/resend-confirmation` - Send another confirmation email
+  - Requires: `Email`
+- **POST** `/api/auth/forgot-password` - Send a password reset link
+  - Requires: `Email`
+- **GET** `/api/auth/reset-password?email={email}&token={token}` - Reset a password
+  - Requires a request body containing `NewPassword`
+- **GET** `/api/auth/me` - Get the authenticated user's profile
+
 ### Voting (`/api/voting`)
 
-All endpoints require user to be authenticated.
+All endpoints require the user to be authenticated.
 
 - **GET** `/api/voting/parties` - Get all available parties
   - Returns: List of parties
@@ -76,16 +88,26 @@ Update the connection string in `appsettings.Development.json`:
 }
 ```
 
-or change the DbContext on the ```Program.cs``` file to use "InMemory" database provider.
+Set the SQL Server password through the `DBPASSWORD` environment variable used by `compose.yaml`. Alternatively, change the DbContext in `Program.cs` to use the InMemory database provider.
 
-### 3. Install Dependencies & Apply Migrations
+### 3. Start the Email Service
+
+The API sends confirmation and password-reset messages through Mailpit. Start the database and Mailpit services from the repository root:
+
+```bash
+docker compose up -d
+```
+
+Mailpit's web inbox is available at `http://localhost:8025`. The API's SMTP sender connects to the `mailpit` service on port `1025`; the API must run in the same Docker Compose network for email delivery. The current Compose file starts only the database and Mailpit, so running the API directly with `dotnet run` does not put it on that network.
+
+### 4. Install Dependencies & Apply Migrations
 
 ```bash
 dotnet restore
 dotnet ef database update
 ```
 
-### 4. Run the Application
+### 5. Run the Application
 
 ```bash
 dotnet run
