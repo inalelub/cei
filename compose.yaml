@@ -11,6 +11,17 @@ services:
       - ACCEPT_EULA=Y
       - MSSQL_SA_PASSWORD=${DBPASSWORD}
       - MSSQL_PID=Developer
+  
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: mailpit
+    restart: unless-stopped
+    volumes:
+        - mailpit-data:/data
+    ports:
+      - 1025:1025 
+      - 8025:8025 
 
 volumes:
   sqlvolume:
+  mailpit-data:

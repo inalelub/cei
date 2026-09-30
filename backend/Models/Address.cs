@@ -30,5 +30,5 @@ public class Address
 
     // Relationship between ApplicationUser & Address [One-To-One : Each voter can have only one address & each address belongs to exactly one voter]
     public string? ApplicationUserId { get; set; } 
-    public virtual ApplicationUser? ApplicationUser { get; set; } 
+    public ApplicationUser? ApplicationUser { get; set; } 
 }
