@@ -42,3 +42,7 @@ app.MapIdentityApiEndpoints();
 app.MapVotingEndpoints();
 
 app.Run();
+
+public partial class Program
+{
+}
