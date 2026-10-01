@@ -7,6 +7,7 @@
     <UserSecretsId>5208aa7b-333a-4335-8fc8-41d1bb6f3ddc</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
+    <DisableOpenApiSourceGeneratorXmlComments>true</DisableOpenApiSourceGeneratorXmlComments>
   </PropertyGroup>
 
     <ItemGroup>
