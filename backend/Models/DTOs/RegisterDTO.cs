@@ -9,4 +9,5 @@ public class RegisterDto
     public required string IdentityNumber { get; set; }
     public string? PhoneNumber { get; set; }
     public required string Password { get; set; }    
+    public Address? Address { get; set; }
 }
