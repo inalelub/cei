@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddOpenApi();
-
+builder.Services.AddCors(options => options.AddPolicy("Frontend", policy => policy.WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>()) .AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"])); 
 // Register the core identity services into the DI container (usermanager, siginmanager, etc.)
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
@@ -21,6 +21,13 @@ builder.Services.Configure<IdentityOptions>((options =>
    options.User.RequireUniqueEmail = true; 
    options.SignIn.RequireConfirmedEmail = true;
 }));
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = builder.Environment.IsDevelopment() ? CookieSecurePolicy.SameAsRequest : CookieSecurePolicy.Always;
+});
 
 builder.Services.AddAuthentication();
 builder.Services.AddAuthorization();
@@ -34,6 +41,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference(); 
 }
 
+app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHttpsRedirection();

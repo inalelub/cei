@@ -88,39 +88,37 @@ Update the connection string in `appsettings.Development.json`:
 }
 ```
 
-Set the SQL Server password through the `DBPASSWORD` environment variable used by `compose.yaml`. Alternatively, change the DbContext in `Program.cs` to use the InMemory database provider.
+Set the SQL Server password through the `MSSQL_SA_PASSWORD` and `BACKEND_DEVELOPMENT_DATABASE_PASSWORD` environment variable used by `compose.yaml`. Alternatively, change the DbContext in `Program.cs` to use the InMemory database provider.
 
-### 3. Start the Email Service
-
-The API sends confirmation and password-reset messages through Mailpit. Start the database and Mailpit services from the repository root:
+### 3. Start the application with Docker Compose
 
 ```bash
-docker compose up -d
+docker compose up --build -d
 ```
 
-Mailpit's web inbox is available at `http://localhost:8025`. The API's SMTP sender connects to the `mailpit` service on port `1025`; the API must run in the same Docker Compose network for email delivery. The current Compose file starts only the database and Mailpit, so running the API directly with `dotnet run` does not put it on that network.
+The frontend is available at `http://localhost:3000`, the API at `http://localhost:5102`, and Mailpit's web inbox at `http://localhost:8025`. The API connects to SQL Server at the Compose service name `db` and sends email through `mailpit`.
 
-### 4. Install Dependencies & Apply Migrations
+The API image does not apply database migrations automatically. Apply the existing EF Core migrations with the .NET SDK before using database-backed endpoints. From the repository root, set the connection string to the published SQL Server port (`localhost,1433`) and run:
+
+```powershell
+$env:ConnectionStrings__DefaultConnection = "Server=localhost,1433;Database=voting_db;User Id=sa;Password=<BACKEND_DEVELOPMENT_DATABASE_PASSWORD>;Encrypt=True;TrustServerCertificate=True"
+dotnet ef database update --project backend/backend.csproj
+```
+
+To run the tests separately, from the repository root:
 
 ```bash
-dotnet restore
-dotnet ef database update
+dotnet test tests/backend.Tests/backend.Tests.csproj
 ```
 
-### 5. Run the Application
-
-```bash
-dotnet run
-```
-
-The API will start on `https://localhost:5102` (or the port configured in `launchSettings.json`).
+The test project uses an in-memory database and a captured email sender, so it does not need its own Dockerfile or a service in the default Compose stack.
 
 ## API Documentation
 
-Once the application is running:
+With the Compose stack running:
 
-- **Scalar UI**: Navigate to `https://localhost:5102/scalar/` for an interactive API explorer
-- **OpenAPI Spec**: Available at `https://localhost:5102/openapi/v1.json`
+- **Scalar UI**: Navigate to `http://localhost:5102/scalar/` for an interactive API explorer
+- **OpenAPI Spec**: Available at `http://localhost:5102/openapi/v1.json`
 
 ## Project Structure
 

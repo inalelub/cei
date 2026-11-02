@@ -2,11 +2,11 @@
 
 import { RegisterFormState, RegisterFormScheme, LoginFormState } from "@/lib/definitions";
 import { redirect } from "next/navigation";
-import { API_BASE_URL } from "@/lib/api";
+import { API_INTERNAL_BASE_URL } from "@/lib/api";
 
 export async function login(prevState: LoginFormState, formData: FormData) {
 
-    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+    const response = await fetch(`${API_INTERNAL_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(Object.fromEntries(formData)),
@@ -23,7 +23,7 @@ export async function login(prevState: LoginFormState, formData: FormData) {
     redirect("/log-success")
 }
 
-export async function register(prevState: RegisterFormState, formData: FormData) {
+export async function register(prevState: RegisterFormState, formData: FormData): Promise<RegisterFormState> {
 
     const values = {
         username: String(formData.get('username') ?? ""),
@@ -46,7 +46,7 @@ export async function register(prevState: RegisterFormState, formData: FormData)
         }
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+    const response = await fetch(`${API_INTERNAL_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(validatedForm.data),

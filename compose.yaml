@@ -9,7 +9,7 @@ services:
       - sqlvolume:/var/opt/mssql
     environment:
       - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=${DBPASSWORD}
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
       - MSSQL_PID=Developer
   
   mailpit:
@@ -22,10 +22,29 @@ services:
       - 1025:1025 
       - 8025:8025 
 
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: backend:local
+    ports:
+      - "5102:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      ConnectionStrings__DefaultConnection: "Server=db,1433;Database=cei;User Id=sa;Password=${BACKEND_DEVELOPMENT_DATABASE_PASSWORD};Encrypt=True;TrustServerCertificate=True"
+      Cors__AllowedOrigins__0: http://localhost:3000
+    depends_on:
+      - db
+      - mailpit
+    restart: unless-stopped
+
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:5102}
     image: frontend:local
     init: true
     ports:
@@ -35,6 +54,9 @@ services:
       NEXT_TELEMETRY_DISABLED: "1"
       HOSTNAME: 0.0.0.0
       PORT: "3000"
+      API_INTERNAL_BASE_URL: http://backend:8080
+    depends_on:
+      - backend
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/ || exit 1"]
