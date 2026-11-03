@@ -167,6 +167,9 @@ export function RegisterForm({ ...props }: React.ComponentProps<typeof Card>) {
               required />
               <FieldDescription>Please confirm your password.</FieldDescription>
             </Field>
+            {state?.message && (
+              <p className="text-red-500 text-sm">{state.message}</p>
+            )}
             <FieldGroup>
               <Field>
                 <Button disabled={pending} type="submit">Create Account</Button>
