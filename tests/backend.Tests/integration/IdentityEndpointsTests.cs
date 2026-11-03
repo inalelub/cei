@@ -343,7 +343,7 @@ public sealed class IdentityEndpointsTests(AuthApiFactory factory) : IClassFixtu
         userName = email,
         firstName = "Test",
         lastName = "Voter",
-        identityNumber = Random.Shared.NextInt64(0, 10_000_000_000_000).ToString("D13"),
+        identityNumber = "900101" + Random.Shared.Next(0, 10_000).ToString("D4") + "087",
         phoneNumber = "0123456789",
         password = InitialPassword
     };

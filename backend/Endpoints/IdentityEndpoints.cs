@@ -1,5 +1,7 @@
-﻿﻿﻿﻿﻿using System.Security.Claims;
+﻿using System.Security.Claims;
+using System.Text.RegularExpressions;
 using backend.Data;
+using backend.Helpers;
 using backend.Models.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -25,6 +27,25 @@ public static class IdentityEndpoints
 
         static async Task<IResult> Register(UserManager<ApplicationUser> userManager, IEmailSender emailSender, [FromBody] RegisterDto dto, ILogger<ApplicationUser> logger)
         {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            if (!Regex.IsMatch(dto.IdentityNumber ?? string.Empty, ApplicationUser.IdentityNumberPattern) || !IdentityNumberParser.TryGetBirthDate(dto.IdentityNumber, today, out var birthDate))
+            {
+                logger.LogWarning("Registration rejected: invalid ID number format.");
+                return TypedResults.Problem(
+                    statusCode: StatusCodes.Status400BadRequest,
+                    title: "Invalid ID number",
+                    detail: "ID number must be 13 digits and start with a valid birth date (YYMMDD).");
+            }
+
+            if (!IdentityNumberParser.IsAtLeast(birthDate, today, 18))
+            {
+                logger.LogWarning("Registration rejected: applicant is under {MinimumAge}.", 18);
+                return TypedResults.Problem(
+                    statusCode: StatusCodes.Status400BadRequest,
+                    title: "Age requirement not met",
+                    detail: $"You must be at least 18 years old to register.");
+            }
+
             var user = new ApplicationUser
             {
                 UserName = dto.UserName ?? dto.Email,

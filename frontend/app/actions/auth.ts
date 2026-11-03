@@ -58,7 +58,7 @@ export async function register(prevState: RegisterFormState, formData: FormData)
         return { 
             errors: errorData.errors ?? {}, 
             values,
-            message: errorData.message ?? "Registration failed" 
+            message: errorData.detail ?? errorData.message ?? "Registration failed"
         }
     }
 
