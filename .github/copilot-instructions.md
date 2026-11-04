@@ -8,12 +8,10 @@
 - Use scope to indicate the area of the codebase (e.g., 'calc', 'tests', 'ci')
 - Write the subject line in imperative mood, lowercase, and keep it under 72 characters
 - Do not end the subject line with a period
-- Reference related GitHub issues in the footer when applicable (e.g., 'Closes #42')
+- Reference related GitHub issues in the footer when applicable. Which means check my Github issues before hand to verify if there aren't any related GitHub issues (e.g., 'Closes #42')
 - If a commit introduces a breaking change, include BREAKING CHANGE:' in the footer
 
 ### Examples
-
-...
 
 feat(calc): add modulo operation support
 
