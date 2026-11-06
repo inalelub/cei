@@ -10,6 +10,9 @@ public class Vote
 {
     [Key]
     public int Id { get; set; }
+
+    // When the vote was cast (UTC)
+    public DateTime CastAt { get; set; }
     
     // Relationship between ApplicationUser & Vote [One-To-One : Each voter can have only one vote & each vote belongs to exactly one voter]
     public string? ApplicationUserId { get; set; } // optional foreign key property
