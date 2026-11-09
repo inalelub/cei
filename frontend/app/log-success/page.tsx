@@ -1,13 +1,23 @@
 import Link from "next/link";
+import { CircleCheck } from "lucide-react";
+import { AuthCard, AuthCardHeader, AuthShell } from "@/components/auth-shell";
 
-export default async function Page() {
+export default function Page() {
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">
-          <h1 className="text-2xl font-bold mb-4">Login Successful</h1>
-          <p className="mb-4">You have successfully logged in. You can now cast your vote.</p>
-          <Link href={'/parties'} className="text-blue-500 hover:underline">View parties</Link>
-      </div>
-    </div>
+    <AuthShell widthClass="max-w-md">
+      <AuthCard>
+        <AuthCardHeader
+          icon={<CircleCheck className="size-6" aria-hidden />}
+          title="You're signed in"
+          description="You can now cast your vote."
+        />
+        <Link
+          href="/parties"
+          className="inline-flex h-12 w-full items-center justify-center rounded-control bg-cei-blue px-4 text-sm font-semibold tracking-[0.03em] text-white uppercase hover:bg-cei-blue-dark"
+        >
+          View parties
+        </Link>
+      </AuthCard>
+    </AuthShell>
   )
 }

@@ -1,78 +1,55 @@
 'use client'
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
 import Link from 'next/link'
-import { Input } from "@/components/ui/input"
-import { login } from "@/app/actions/auth"
-import { useActionState } from "react"
-import { LoginFormState } from "@/lib/definitions"
+import { useActionState } from 'react'
+import { UserRound } from 'lucide-react'
+import { login } from '@/app/actions/auth'
+import { LoginFormState } from '@/lib/definitions'
+import { AuthCard, AuthCardHeader } from '@/components/auth-shell'
+import { FormAlert, PasswordField, SubmitButton, TextField } from '@/components/auth-fields'
 
-const initialState: LoginFormState = {
-  error: ''
-}
+const initialState: LoginFormState = {}
 
-export function LoginForm({className, ...props}: React.ComponentProps<"div">) {
-
-  const [state, action, pending] = useActionState(login, initialState);
+export function LoginForm() {
+  const [state, action, pending] = useActionState(login, initialState)
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>
-            Enter your email below to login to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form action={action}>
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="username">Username / Email</FieldLabel>
-                <Input
-                  id="username"
-                  name="username"
-                  type="text"
-                />
-              </Field>
-              <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  {/* TODO: implement the forgot password view */}
-                  <a href="#" className="ml-auto inline-block text-sm underline-offset-4 hover:underline">
-                    Forgot your password?
-                  </a>
-                </div>
-                <Input 
-                id="password" 
-                type="password" 
-                name="password" />
-              </Field>
-              <Field>
-                <Button type="submit">Login</Button>
-                {state?.error ? <p className="text-sm text-red-600 text-center">{state?.error}</p> : null}
-                <FieldDescription className="text-center">
-                  Don&apos;t have an account? <Link href={'/register'}>Sign up</Link> 
-                </FieldDescription>
-              </Field>
-            </FieldGroup>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+    <AuthCard>
+      <AuthCardHeader
+        icon={<UserRound className="size-6" aria-hidden />}
+        title="Sign in to your account"
+        description="Sign in to view parties and cast your vote."
+      />
+
+      <form action={action} className="flex flex-col gap-4" noValidate>
+        {state?.error ? <FormAlert>{state.error}</FormAlert> : null}
+
+        <TextField
+          name="username"
+          label="Username"
+          type="text"
+          autoComplete="username"
+          placeholder="Your username"
+          defaultValue={state?.username ?? ''}
+          hint="Use the username you registered with. If you didn't choose one, use your email address."
+          required
+        />
+
+        <div className="flex flex-col gap-1.5">
+          <PasswordField name="password" label="Password" autoComplete="current-password" placeholder="Your password" required />
+          {/* TODO: implement the forgot password view */}
+          <a href="#" className="self-end text-[13px] text-cei-blue hover:underline">
+            Forgot your password?
+          </a>
+        </div>
+
+        <SubmitButton pending={pending} pendingLabel="Signing in…">Sign in</SubmitButton>
+
+        <p className="text-center text-[13px] text-cei-gray">
+          New here?{' '}
+          <Link href="/register" className="font-medium text-cei-blue hover:underline">Register to vote</Link>
+        </p>
+      </form>
+    </AuthCard>
   )
 }
