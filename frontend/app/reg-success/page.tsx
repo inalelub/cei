@@ -1,13 +1,26 @@
 import Link from "next/link";
+import { MailCheck } from "lucide-react";
+import { AuthCard, AuthCardHeader, AuthShell } from "@/components/auth-shell";
 
-export default async function Page() {
+export default function Page() {
   return (
-    <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-      <div className="w-full max-w-sm">
-          <h1 className="text-2xl font-bold mb-4">Registration Successful</h1>
-          <p className="mb-4">You have successfully registered a user. You can now access your account.</p>
-          <Link href={'/login'} className="text-blue-500 hover:underline">Login</Link>
-      </div>
-    </div>
+    <AuthShell widthClass="max-w-md">
+      <AuthCard>
+        <AuthCardHeader
+          icon={<MailCheck className="size-6" aria-hidden />}
+          title="Registration successful"
+          description="One more step before you can sign in."
+        />
+        <p className="mb-6 text-sm leading-relaxed text-cei-ink">
+          We&apos;ve sent a confirmation link to your email address. Confirm your email, then sign in to your account.
+        </p>
+        <Link
+          href="/login"
+          className="inline-flex h-12 w-full items-center justify-center rounded-control bg-cei-blue px-4 text-sm font-semibold tracking-[0.03em] text-white uppercase hover:bg-cei-blue-dark"
+        >
+          Go to sign in
+        </Link>
+      </AuthCard>
+    </AuthShell>
   )
 }

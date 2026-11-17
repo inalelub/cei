@@ -224,7 +224,7 @@ public sealed class IdentityEndpointsTests(AuthApiFactory factory) : IClassFixtu
         var message = Assert.Single(factory.EmailSender.Messages);
         var query = ReadEmailLinkQuery(message);
         using var request = new HttpRequestMessage(
-            HttpMethod.Get,
+            HttpMethod.Post,
             $"/api/auth/reset-password?email={Uri.EscapeDataString(query["email"])}&token={Uri.EscapeDataString(query["token"])}")
         {
             Content = JsonContent.Create(new { newPassword = NewPassword })
@@ -246,7 +246,7 @@ public sealed class IdentityEndpointsTests(AuthApiFactory factory) : IClassFixtu
     {
         using var client = factory.CreateTestClient();
         using var request = new HttpRequestMessage(
-            HttpMethod.Get,
+            HttpMethod.Post,
             $"/api/auth/reset-password?email={Uri.EscapeDataString(UniqueEmail())}&token=token")
         {
             Content = JsonContent.Create(new { newPassword = NewPassword })
@@ -264,7 +264,7 @@ public sealed class IdentityEndpointsTests(AuthApiFactory factory) : IClassFixtu
         await CreateUser(email);
         using var client = factory.CreateTestClient();
         using var request = new HttpRequestMessage(
-            HttpMethod.Get,
+            HttpMethod.Post,
             $"/api/auth/reset-password?email={Uri.EscapeDataString(email)}&token=invalid-token")
         {
             Content = JsonContent.Create(new { newPassword = NewPassword })

@@ -21,7 +21,7 @@ public static class IdentityEndpoints
         group.MapGet("/confirm-email", ConfirmEmail).AllowAnonymous();
         group.MapPost("/resend-confirmation", ResendConfirmation).AllowAnonymous();
         group.MapPost("/forgot-password", ForgotPassword).AllowAnonymous();
-        group.MapGet("/reset-password", ResetPassword).AllowAnonymous();
+        group.MapPost("/reset-password", ResetPassword).AllowAnonymous();
         group.MapGet("/me", GetUser);
         return;
 

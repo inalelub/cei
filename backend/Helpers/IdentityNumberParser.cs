@@ -51,4 +51,26 @@ public static class IdentityNumberParser
 
         return age >= years;
     }
+    
+    public static string GetGender(string idNumber)
+    {
+        if (idNumber.Length < 7 || !char.IsAsciiDigit(idNumber[6]))
+        {
+            throw new ArgumentException("Invalid ID number format.", nameof(idNumber));
+        }
+
+        var genderDigit = int.Parse(idNumber.AsSpan(6, 1));
+        return genderDigit >= 5 ? "Male" : "Female";
+    }
+    
+    public static bool IsSouthAfricanCitizen(string idNumber)
+    {
+        if (idNumber.Length < 11 || !char.IsAsciiDigit(idNumber[10]))
+        {
+            throw new ArgumentException("Invalid ID number format.", nameof(idNumber));
+        }
+
+        var citizenshipDigit = int.Parse(idNumber.AsSpan(10, 1));
+        return citizenshipDigit == 0;
+    }
 }

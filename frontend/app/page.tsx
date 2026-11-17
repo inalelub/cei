@@ -1,19 +1,23 @@
-import Link from "next/link";
-
+import { SiteFooter } from "@/components/home/site-footer";
+import { SiteHeader } from "@/components/home/site-header";
+import { VoterStats } from "@/components/home/voter-stats";
+import { MoreElectionInfo } from "@/components/home/election-info";
+import { ResultsLinks } from "@/components/home/elections-results";
+import { RegistrationStatusBar } from "@/components/home/status-bar";
 
 export default function Home() {
   return (
     <>
-      <h1 className="text-2xl font-bold text-center py-1">Welcome to the CEI Portal</h1>
-      <p className="text-center p-2">Please login or register to continue.</p>
-      <div className="flex justify-center gap-4">
-        <Link href={"/register"} className="bg-blue-500 text-white px-4 py-2 rounded">
-          Register
-        </Link>
-        <Link href={"/login"} className="bg-green-500 text-white px-4 py-2 rounded">
-          Login
-        </Link>
-      </div>
+      <SiteHeader />
+
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-10 px-6 py-10">
+        <RegistrationStatusBar />
+        <ResultsLinks />
+        <VoterStats />
+        <MoreElectionInfo />
+      </main>
+
+      <SiteFooter />
     </>
   );
 }

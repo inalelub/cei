@@ -7,8 +7,22 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
+  --color-cei-blue: #0076e8;
+  --color-cei-blue-dark: #0a5fc0;
+  --color-cei-blue-tint: #e4f2ff;
+  --color-cei-navy: #16194f;
+  --color-cei-gray: #57585a;
+  --color-cei-ink: #424242;
+  --color-cei-border: #d9e0ea;
+  --color-cei-error: #d03238;
+  --color-cei-error-tint: #fdecec;
+  --color-cei-success: #1b7f4b;
+  --color-cei-header: #0049be;
+  --color-cei-stat-grey: #f7f7f7;
+  --radius-card: 9px;
+  --radius-control: 4px;
   --font-heading: var(--font-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
