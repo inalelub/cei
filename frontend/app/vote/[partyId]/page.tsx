@@ -1,13 +1,18 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { redirect, useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { ArrowLeft, CheckCircle2, Lock, TriangleAlert } from "lucide-react";
+import { AuthCard, AuthCardHeader, AuthShell } from "@/components/auth-shell";
 import { API_BASE_URL } from "@/lib/api";
 import type { PartyDefinition } from "@/lib/definitions";
+import preloader from "@/assets/preloader.gif";
 
 export default function VotePage() {
   const { partyId } = useParams<{ partyId: string }>();
+  const router = useRouter();
   const [party, setParty] = useState<PartyDefinition | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -63,53 +68,101 @@ export default function VotePage() {
         throw new Error("Sign in to cast your vote.");
       }
       if (!response.ok) throw new Error("Your vote could not be submitted. Please try again.");
-
-      redirect("/thank-you");
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : "Your vote could not be submitted. Please try again.");
       setIsSubmitting(false);
+      return;
     }
+
+    // Navigate outside the try/catch. Keep isSubmitting true so the button can't be pressed again.
+    router.push("/thank-you");
   }
 
+  const name = party ? (party.partyName ?? party.name ?? `Party ${party.id}`) : "";
+
   return (
-    <main className="flex min-h-svh flex-col bg-[#f4f3ed] text-stone-900">
-      <header className="border-b border-stone-300">
-        <div className="mx-auto max-w-5xl px-6 py-5">
-          <Link className="text-sm font-bold tracking-wide text-emerald-950" href="/">CEI / VOTE</Link>
-        </div>
-      </header>
-      <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center px-6 py-16">
-        <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-emerald-800">Review your choice</p>
-        <h1 className="text-4xl font-semibold tracking-tight md:text-5xl">Confirm your vote</h1>
+    <AuthShell>
+      <AuthCard>
+        <AuthCardHeader
+          icon={<CheckCircle2 className="size-6" aria-hidden />}
+          title="Confirm your vote"
+          description="Review your choice before it is cast."
+        />
+
         {isLoading ? (
-          <p role="status" className="mt-6 text-stone-600">Loading party...</p>
+          <div role="status" className="flex flex-col items-center justify-center gap-3 py-10">
+            <Image src={preloader} alt="" unoptimized priority className="h-16 w-auto" />
+            <p className="text-sm text-cei-gray">Loading party…</p>
+          </div>
         ) : party ? (
           <>
-            <p className="mt-6 text-xl font-semibold">{party.partyName ?? party.name ?? `Party ${party.id}`}</p>
-            {party.partyAbbreviation && <p className="mt-1 text-sm text-stone-600">{party.partyAbbreviation}</p>}
-            <p className="mt-5 max-w-lg text-base leading-7 text-stone-600">Your vote can only be submitted once.</p>
-            {error && <p role="alert" className="mt-5 text-sm font-medium text-red-800">{error}</p>}
-            <div className="mt-8 flex flex-wrap gap-3">
-              <button
-                className="inline-flex min-h-12 items-center justify-center bg-emerald-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
-                disabled={isSubmitting}
-                onClick={castVote}
-                type="button"
-              >
-                {isSubmitting ? "Submitting..." : "Cast vote"}
-              </button>
-              <Link className="inline-flex min-h-12 items-center justify-center border border-stone-400 px-5 py-3 text-sm font-semibold text-stone-800 transition-colors hover:bg-white" href="/parties">
-                Back to parties
-              </Link>
+            <div className="flex items-center gap-4 rounded-card border border-cei-border bg-cei-stat-grey px-4 py-4">
+              {party.logoUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element -- logos are arbitrary external URLs
+                <img src={party.logoUrl} alt="" className="size-13 shrink-0 rounded-full border border-cei-border bg-white object-contain p-1" />
+              ) : (
+                <span aria-hidden className="flex size-13 shrink-0 items-center justify-center rounded-full bg-cei-blue-tint text-[15px] font-bold tracking-[0.02em] text-cei-header">
+                  {String(party.partyAbbreviation ?? name.slice(0, 3)).toUpperCase().slice(0, 4)}
+                </span>
+              )}
+              <div className="min-w-0">
+                <p className="text-[17px] leading-6 font-medium text-cei-navy">{name}</p>
+                {party.partyAbbreviation && (
+                  <p className="text-[13px] leading-[1.45] text-cei-gray">{party.partyAbbreviation}</p>
+                )}
+              </div>
             </div>
+
+            <p className="mt-5 text-[13px] leading-[1.45] text-cei-gray">
+              Your vote can only be submitted once and cannot be changed afterwards.
+            </p>
+
+            {error && (
+              <p role="alert" className="mt-4 rounded-control bg-cei-error-tint px-3.5 py-3 text-sm font-medium text-cei-error">
+                {error}{" "}
+                {error === "Sign in to cast your vote." && (
+                  <Link href="/login" className="font-semibold underline">Sign in</Link>
+                )}
+              </p>
+            )}
+
+            <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+              <Link
+                href="/parties"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-control border border-cei-border bg-white px-5 text-sm font-semibold tracking-[0.03em] text-cei-navy uppercase hover:bg-cei-stat-grey focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cei-blue"
+              >
+                <ArrowLeft className="size-4" aria-hidden /> Back to parties
+              </Link>
+              <button
+                type="button"
+                onClick={castVote}
+                disabled={isSubmitting}
+                className="inline-flex h-10 items-center justify-center rounded-control bg-cei-blue px-5 text-sm font-semibold tracking-[0.03em] text-white uppercase shadow-[0_2px_2px_#00000024,0_1px_5px_#0000001f] hover:bg-cei-blue-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cei-blue disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isSubmitting ? "Submitting…" : "Cast vote"}
+              </button>
+            </div>
+
+            <p className="mt-6 flex items-center justify-center gap-2 text-center text-[13px] text-cei-gray">
+              <Lock className="size-4 shrink-0 text-cei-success" aria-hidden />
+              Your vote is secret. Nobody, including the CEI, can see who you voted for.
+            </p>
           </>
         ) : (
-          <>
-            <p role="alert" className="mt-6 text-sm font-medium text-red-800">{error}</p>
-            <Link className="mt-6 self-start text-sm font-semibold text-emerald-900 underline" href="/parties">Return to parties</Link>
-          </>
+          <div role="alert" className="flex flex-col items-center gap-3 px-2 py-6 text-center">
+            <span className="flex size-12 items-center justify-center rounded-full bg-cei-error-tint text-cei-error">
+              <TriangleAlert className="size-6" aria-hidden />
+            </span>
+            <p className="max-w-md text-sm text-cei-gray">{error}</p>
+            <div className="flex gap-4 text-sm font-semibold">
+              {error === "Sign in to cast your vote." && (
+                <Link href="/login" className="text-cei-blue hover:underline">Sign in</Link>
+              )}
+              <Link href="/parties" className="text-cei-blue hover:underline">Return to parties</Link>
+            </div>
+          </div>
         )}
-      </section>
-    </main>
+      </AuthCard>
+    </AuthShell>
   );
 }
