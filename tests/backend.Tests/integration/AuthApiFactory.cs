@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace backend.Tests.integration;
 
@@ -16,6 +17,16 @@ public sealed class AuthApiFactory : WebApplicationFactory<Program>
 
     // Keep auth redirects visible so tests can assert unauthenticated responses.
     public HttpClient CreateTestClient() => CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+
+    protected override IHost CreateHost(IHostBuilder builder)
+    {
+        var host = base.CreateHost(builder);
+
+        // The in-memory provider is not migrated, so create the schema to apply the seeded parties (HasData).
+        using var scope = host.Services.CreateScope();
+        scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.EnsureCreated();
+        return host;
+    }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
