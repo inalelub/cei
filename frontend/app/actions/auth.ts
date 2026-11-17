@@ -5,7 +5,9 @@ import {
     RegisterFormErrors,
     RegisterFormScheme,
     LoginFormState,
+    ForgotPasswordFormState,
 } from "@/lib/definitions";
+import * as z from 'zod'
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { API_INTERNAL_BASE_URL } from "@/lib/api";
@@ -146,6 +148,40 @@ export async function register(prevState: RegisterFormState, formData: FormData)
     }
 
     redirect("/reg-success")
+}
+
+export async function forgotPassword(prevState: ForgotPasswordFormState, formData: FormData): Promise<ForgotPasswordFormState> {
+    const email = String(formData.get('email') ?? '').trim()
+
+    if (!z.email().safeParse(email).success) {
+        return { error: 'Enter a valid email address.', email }
+    }
+
+    let response: Response
+
+    try {
+        response = await fetch(`${API_INTERNAL_BASE_URL}/api/auth/forgot-password`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email }),
+            cache: 'no-store',
+        })
+    } catch {
+        return { error: 'We could not reach the server. Please try again shortly.', email }
+    }
+
+    // A 404 means no account uses this email. Show the same confirmation anyway,
+    // so the form can't be used to find out which emails are registered.
+    if (response.ok || response.status === 404) {
+        return { sent: true, email }
+    }
+
+    const problem = await readJson<ProblemDetails>(response)
+
+    return {
+        error: problem?.detail ?? problem?.title ?? 'We could not send the reset link. Please try again.',
+        email,
+    }
 }
 
 /**

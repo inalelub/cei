@@ -37,10 +37,9 @@ export function LoginForm() {
 
         <div className="flex flex-col gap-1.5">
           <PasswordField name="password" label="Password" autoComplete="current-password" placeholder="Your password" required />
-          {/* TODO: implement the forgot password view */}
-          <a href="#" className="self-end text-[13px] text-cei-blue hover:underline">
+          <Link href="/forgot-password" className="self-end text-[13px] text-cei-blue hover:underline">
             Forgot your password?
-          </a>
+          </Link>
         </div>
 
         <SubmitButton pending={pending} pendingLabel="Signing in…">Sign in</SubmitButton>

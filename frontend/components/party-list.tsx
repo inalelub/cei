@@ -1,11 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import Image, { type StaticImageData } from 'next/image'
+import Image from 'next/image'
 import { useEffect, useId, useMemo, useState } from "react";
-import { ArrowRight, ArrowUpRight, Lock, Search } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Lock, RotateCw, Search, WifiOff, TriangleAlert } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api";
 import type { PartyDefinition } from "@/lib/definitions";
+import preloader from '@/assets/preloader.gif'
+
+type LoadError = "network" | "unauthorized" | "server";
+
+const errorCopy: Record<Exclude<LoadError, "unauthorized">, { title: string; body: string }> = {
+  network: {
+    title: "We couldn't reach the server",
+    body: "Check your internet connection, then try again. If you're online, the service may be temporarily unavailable.",
+  },
+  server: {
+    title: "The party list could not be loaded",
+    body: "Something went wrong on our side. Please try again in a moment.",
+  },
+};
 
 // Monogram tints, borrowed from the home page Quick Links tones.
 const monogramTones = [
@@ -37,11 +51,14 @@ function PartyMonogram({ party, tone }: { party: PartyDefinition; tone: string }
 }
 
 export function PartyList() {
+
   const id = useId();
   const [parties, setParties] = useState<PartyDefinition[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LoadError | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [query, setQuery] = useState("");
+  const [attempt, setAttempt] = useState(0); // Bumped by "Try again" to re-run the fetch effect.
+
 
   useEffect(() => {
 
@@ -49,28 +66,36 @@ export function PartyList() {
 
     async function loadParties() {
 
+      let response: Response;
+
       try {
-        const response = await fetch(`${API_BASE_URL}/api/voting/parties`, {
+        response = await fetch(`${API_BASE_URL}/api/voting/parties`, {
           credentials: "include",
           signal: controller.signal,
         });
-
-        if (!response.ok) {
-          throw new Error(response.status === 401 || response.status === 403
-            ? "Sign in to view the ballot."
-            : "The party list could not be loaded.");
-        }
-
-        setParties(await response.json() as PartyDefinition[]);
-
-      } catch (fetchError) {
-
+      } catch {
+        // fetch only rejects when no response arrived at all (offline, server down, CORS),
+        // e.g. Firefox's "NetworkError when attempting to fetch resource."
         if (!controller.signal.aborted) {
-          setError(fetchError instanceof Error ? fetchError.message : "The party list could not be loaded.");
+          setError("network");
+          setIsLoading(false);
         }
+        return;
+      }
 
+      if (controller.signal.aborted) return;
+
+      if (!response.ok) {
+        setError(response.status === 401 || response.status === 403 ? "unauthorized" : "server");
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        setParties(await response.json() as PartyDefinition[]);
+      } catch {
+        if (!controller.signal.aborted) setError("server");
       } finally {
-
         if (!controller.signal.aborted) setIsLoading(false);
       }
     }
@@ -78,7 +103,13 @@ export function PartyList() {
     void loadParties();
     return () => controller.abort();
 
-  }, []);
+  }, [attempt]);
+
+  function retry() {
+    setError(null);
+    setIsLoading(true);
+    setAttempt((n) => n + 1);
+  }
 
   const visibleParties = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -86,23 +117,46 @@ export function PartyList() {
     return parties
       .map((party, index) => ({ party, index }))
       .filter(({ party }) =>
-        partyName(party).toLowerCase().includes(term)
-        || String(party.partyAbbreviation ?? "").toLowerCase().includes(term));
+        partyName(party).toLowerCase().includes(term) || String(party.partyAbbreviation ?? "").toLowerCase().includes(term));
   }, [parties, query]);
 
-  // TODO: Have a loading gif to show the isLoading state, and a better error message for when the fetch fails (e.g. "The party list could not be loaded. Please try again later.").
   if (isLoading) {
-    return <p role="status" className="text-sm text-cei-gray">
-      Loading parties...
-    </p>;
+    return (
+      <div role="status" className="flex flex-col items-center justify-center gap-3 py-16">
+        <Image src={preloader} alt="" unoptimized priority className="h-16 w-auto" />
+        <p className="text-sm text-cei-gray">Loading parties…</p>
+      </div>
+    );
+  }
+
+  if (error === "unauthorized") {
+    return (
+      <p role="alert" className="rounded-control bg-cei-error-tint px-3.5 py-3 text-sm font-medium text-cei-error">
+        Sign in to view the ballot.{" "}
+        <Link href="/login" className="font-semibold underline">Sign in</Link>
+      </p>
+    );
   }
 
   if (error) {
+    const { title, body } = errorCopy[error];
+    const Icon = error === "network" ? WifiOff : TriangleAlert;
+
     return (
-      <p role="alert" className="rounded-control bg-cei-error-tint px-3.5 py-3 text-sm font-medium text-cei-error">
-        {error}{" "}
-        {error.startsWith("Sign in") ? <Link href="/login" className="font-semibold underline">Sign in</Link> : null}
-      </p>
+      <div role="alert" className="flex flex-col items-center gap-3 rounded-card border border-cei-border bg-white px-6 py-12 text-center">
+        <span className="flex size-12 items-center justify-center rounded-full bg-cei-error-tint text-cei-error">
+          <Icon className="size-6" aria-hidden />
+        </span>
+        <h2 className="text-[17px] font-medium text-cei-navy">{title}</h2>
+        <p className="max-w-md text-[13px] leading-[1.45] text-cei-gray">{body}</p>
+        <button
+          type="button"
+          onClick={retry}
+          className="mt-2 inline-flex h-10 items-center justify-center gap-2 rounded-control bg-cei-blue px-5 text-sm font-semibold tracking-[0.03em] text-white uppercase shadow-[0_2px_2px_#00000024,0_1px_5px_#0000001f] hover:bg-cei-blue-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cei-blue"
+        >
+          <RotateCw className="size-4" aria-hidden /> Try again
+        </button>
+      </div>
     );
   }
 

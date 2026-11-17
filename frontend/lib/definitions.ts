@@ -90,6 +90,13 @@ export type LoginFormState = {
     username?: string
 }
 
+export type ForgotPasswordFormState = {
+    error?: string
+    email?: string
+    /** True once the request is accepted; the form then shows the "check your email" view. */
+    sent?: boolean
+}
+
 export type PartyDefinition = {
   id: number
   partyName?: string
