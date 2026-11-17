@@ -22,29 +22,49 @@ export default function VotePage() {
     const controller = new AbortController();
 
     async function loadParty() {
+      let response: Response;
+
       try {
-        const response = await fetch(`${API_BASE_URL}/api/voting/parties`, {
+        response = await fetch(`${API_BASE_URL}/api/voting/parties`, {
           credentials: "include",
           signal: controller.signal,
         });
-
-        if (!response.ok) {
-          throw new Error(response.status === 401 || response.status === 403
-            ? "Sign in to cast your vote."
-            : "The selected party could not be loaded.");
-        }
-
-        const parties = await response.json() as PartyDefinition[];
-        const selectedParty = parties.find((item) => String(item.id) === partyId);
-        if (!selectedParty) throw new Error("The selected party could not be found.");
-        setParty(selectedParty);
-      } catch (fetchError) {
+      } catch {
+        // fetch only rejects when no response arrived at all (offline, server down, CORS).
         if (!controller.signal.aborted) {
-          setError(fetchError instanceof Error ? fetchError.message : "The selected party could not be loaded.");
+          setError("We could not reach the server. Please try again shortly.");
+          setIsLoading(false);
         }
-      } finally {
-        if (!controller.signal.aborted) setIsLoading(false);
+        return;
       }
+
+      if (controller.signal.aborted) return;
+
+      if (!response.ok) {
+        setError(response.status === 401 || response.status === 403
+          ? "Sign in to cast your vote."
+          : "The selected party could not be loaded.");
+        setIsLoading(false);
+        return;
+      }
+
+      let parties: PartyDefinition[];
+      try {
+        parties = await response.json() as PartyDefinition[];
+      } catch {
+        if (!controller.signal.aborted) {
+          setError("The selected party could not be loaded.");
+          setIsLoading(false);
+        }
+        return;
+      }
+
+      if (controller.signal.aborted) return;
+
+      const selectedParty = parties.find((item) => String(item.id) === partyId);
+      if (selectedParty) setParty(selectedParty);
+      else setError("The selected party could not be found.");
+      setIsLoading(false);
     }
 
     void loadParty();
@@ -55,26 +75,33 @@ export default function VotePage() {
     setIsSubmitting(true);
     setError(null);
 
+    let response: Response;
+
     try {
-      const response = await fetch(`${API_BASE_URL}/api/voting/votes?partyId=${encodeURIComponent(partyId)}`, {
+      response = await fetch(`${API_BASE_URL}/api/voting/votes?partyId=${encodeURIComponent(partyId)}`, {
         method: "POST",
         credentials: "include",
       });
-
-      if (response.status === 409) {
-        throw new Error("Our records show that you have already voted.");
-      }
-      if (response.status === 401 || response.status === 403) {
-        throw new Error("Sign in to cast your vote.");
-      }
-      if (!response.ok) throw new Error("Your vote could not be submitted. Please try again.");
-    } catch (submitError) {
-      setError(submitError instanceof Error ? submitError.message : "Your vote could not be submitted. Please try again.");
+    } catch {
+      // fetch only rejects when no response arrived at all (offline, server down, CORS).
+      setError("We could not reach the server. Please try again shortly.");
       setIsSubmitting(false);
       return;
     }
 
-    // Navigate outside the try/catch. Keep isSubmitting true so the button can't be pressed again.
+    if (!response.ok) {
+      if (response.status === 409) {
+        setError("Our records show that you have already voted.");
+      } else if (response.status === 401 || response.status === 403) {
+        setError("Sign in to cast your vote.");
+      } else {
+        setError("Your vote could not be submitted. Please try again.");
+      }
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Keep isSubmitting true so the button can't be pressed again.
     router.push("/thank-you");
   }
 
