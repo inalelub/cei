@@ -53,7 +53,7 @@ All endpoints require the user to be authenticated.
 - **GET** `/api/voting/parties` - Get all available parties
   - Returns: List of parties
 
-- **POST** `/api/voting/votes?partyId={id}` - Cast a vote
+- **POST** `/api/voting/vote?partyId={id}` - Cast a vote
   - Requires: `partyId` query parameter
   - Enforces: Each user can vote only once
   - Returns: Success or conflict if already voted

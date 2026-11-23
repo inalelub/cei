@@ -78,7 +78,7 @@ export default function VotePage() {
     let response: Response;
 
     try {
-      response = await fetch(`${API_BASE_URL}/api/voting/votes?partyId=${encodeURIComponent(partyId)}`, {
+      response = await fetch(`${API_BASE_URL}/api/voting/vote?partyId=${encodeURIComponent(partyId)}`, {
         method: "POST",
         credentials: "include",
       });
