@@ -34,7 +34,7 @@ The frontend expects the API at `http://localhost:5102` by default. Set `NEXT_PU
 ### Voting (`/api/voting`)
 
 - **GET** `/api/voting/parties` - Return the available parties as a JSON array. Each item should include `id` and `name` (also accepts `partyId` and `partyName`).
-- **POST** `/api/voting/votes?partyId={id}` - Cast a vote for a party
+- **POST** `/api/voting/vote?partyId={id}` - Cast a vote for a party
   - The API should return a successful status when the vote is accepted
   - The frontend shows an error for unauthorized requests and HTTP `409` when a user has already voted
 
