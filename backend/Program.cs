@@ -2,6 +2,7 @@ using backend.Data;
 using backend.Services;
 using backend.Endpoints;
 using Scalar.AspNetCore;
+using cei.ServiceDefaults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -9,8 +10,13 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.AddServiceDefaults();
 builder.Services.AddOpenApi();
-builder.Services.AddCors(options => options.AddPolicy("Frontend", policy => policy.WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>()) .AllowAnyHeader().AllowAnyMethod().AllowCredentials()));
+builder.Services.AddCors(options => options.AddPolicy("Frontend", policy => policy.WithOrigins(builder.Configuration.GetSection("Cors:AllowedOrigins")
+    .Get<string[]>() ?? Array.Empty<string>())
+    .AllowAnyHeader()
+    .AllowAnyMethod()
+    .AllowCredentials()));
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"])); 
 // Register the core identity services into the DI container (usermanager, siginmanager, etc.)
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
@@ -41,6 +47,8 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference(); 
 }
 
+app.MapDefaultEndpoints();
+
 app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();
@@ -50,7 +58,3 @@ app.MapIdentityApiEndpoints();
 app.MapVotingEndpoints();
 
 app.Run();
-
-public partial class Program
-{
-}

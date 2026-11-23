@@ -6,7 +6,7 @@ using MimeKit;
 
 namespace backend.Services;
 
-public class EmailSender(ILogger<EmailSender> logger) : IEmailSender
+public class EmailSender(ILogger<EmailSender> logger, IConfiguration configuration) : IEmailSender
 {
     public async Task SendEmailAsync(string toEmail, string subject, string htmlMessage)
     {
@@ -29,7 +29,9 @@ public class EmailSender(ILogger<EmailSender> logger) : IEmailSender
 
         using var smtp = new SmtpClient();
         
-        await smtp.ConnectAsync("mailpit", 1025);
+        await smtp.ConnectAsync(
+            configuration["Smtp:Host"] ?? "mailpit",
+            configuration.GetValue("Smtp:Port", 1025));
         await smtp.SendAsync(email);
         await smtp.DisconnectAsync(true);
         
