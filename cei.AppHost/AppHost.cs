@@ -30,6 +30,7 @@ var backend = builder.AddDotnetProject("backend", "../backend/backend.csproj")
     .WaitFor(mailpit);
 
 frontend
+    .WithBun()
     .WithEnvironment("NEXT_PUBLIC_API_BASE_URL", backend.GetEndpoint("http"))
     .WithEnvironment("API_INTERNAL_BASE_URL", backend.GetEndpoint("http"))
     .WaitFor(backend)

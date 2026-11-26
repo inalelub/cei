@@ -40,6 +40,13 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+// Dev only: bring the database schema up to date with the latest EF Core migrations on startup.
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
