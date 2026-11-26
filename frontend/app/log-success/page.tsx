@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { CircleCheck } from "lucide-react";
-import { AuthCard, AuthCardHeader, AuthShell } from "@/components/auth-shell";
+import { PageShell } from "@/components/page-shell";
+import { Panel, PanelHeader } from "@/components/panel";
 
 export default function Page() {
   return (
-    <AuthShell widthClass="max-w-md">
-      <AuthCard>
-        <AuthCardHeader
+    <PageShell widthClass="max-w-md">
+      <Panel>
+        <PanelHeader
           icon={<CircleCheck className="size-6" aria-hidden />}
           title="You're signed in"
           description="You can now cast your vote."
@@ -17,7 +18,7 @@ export default function Page() {
         >
           View parties
         </Link>
-      </AuthCard>
-    </AuthShell>
+      </Panel>
+    </PageShell>
   )
 }

@@ -1,10 +1,10 @@
-import { AuthShell } from "@/components/auth-shell"
+import { PageShell } from "@/components/page-shell"
 import { LoginForm } from "@/components/login-form"
 
 export default function Page() {
   return (
-    <AuthShell widthClass="max-w-md">
+    <PageShell widthClass="max-w-md">
       <LoginForm />
-    </AuthShell>
+    </PageShell>
   )
 }

@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { MailCheck } from "lucide-react";
-import { AuthCard, AuthCardHeader, AuthShell } from "@/components/auth-shell";
+import { PageShell } from "@/components/page-shell";
+import { Panel, PanelHeader } from "@/components/panel";
 
 export default function Page() {
   return (
-    <AuthShell widthClass="max-w-md">
-      <AuthCard>
-        <AuthCardHeader
+    <PageShell widthClass="max-w-md">
+      <Panel>
+        <PanelHeader
           icon={<MailCheck className="size-6" aria-hidden />}
           title="Registration successful"
           description="One more step before you can sign in."
@@ -20,7 +21,7 @@ export default function Page() {
         >
           Go to sign in
         </Link>
-      </AuthCard>
-    </AuthShell>
+      </Panel>
+    </PageShell>
   )
 }

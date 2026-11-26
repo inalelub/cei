@@ -40,6 +40,16 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+// Dev only: bring the database schema up to date with the latest EF Core migrations on startup.
+if (app.Environment.IsDevelopment())
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    // Integration tests swap in the in-memory provider, which has no migrations (they call EnsureCreated instead).
+    if (db.Database.IsRelational()) db.Database.Migrate();
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

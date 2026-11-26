@@ -28,7 +28,7 @@ public static class IdentityEndpoints
         static async Task<IResult> Register(UserManager<ApplicationUser> userManager, IEmailSender emailSender, [FromBody] RegisterDto dto, ILogger<ApplicationUser> logger)
         {
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
-            if (!Regex.IsMatch(dto.IdentityNumber ?? string.Empty, ApplicationUser.IdentityNumberPattern) || !IdentityNumberParser.TryGetBirthDate(dto.IdentityNumber, today, out var birthDate))
+            if (!Regex.IsMatch(dto.IdentityNumber, ApplicationUser.IdentityNumberPattern) || !IdentityNumberParser.TryGetBirthDate(dto.IdentityNumber, today, out var birthDate))
             {
                 logger.LogWarning("Registration rejected: invalid ID number format.");
                 return TypedResults.Problem(
