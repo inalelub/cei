@@ -11,6 +11,7 @@ import * as z from 'zod'
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { API_INTERNAL_BASE_URL } from "@/lib/api";
+import { cookieHeader, IDENTITY_COOKIE_PREFIX } from "@/lib/session";
 
 type IdentityError = { 
     code?: string; 
@@ -69,6 +70,28 @@ export async function login(prevState: LoginFormState, formData: FormData): Prom
 
     await forwardSetCookies(response)
     redirect("/log-success")
+}
+
+export async function logout(): Promise<void> {
+    // End the session on the API too.
+    try {
+        await fetch(`${API_INTERNAL_BASE_URL}/api/auth/logout`, {
+            method: 'POST',
+            headers: { Cookie: await cookieHeader() },
+            cache: 'no-store',
+            redirect: 'manual',
+        })
+    } catch {
+        // Ignored: the cookie is removed regardless.
+    }
+
+    // Delete the cookie(s) from the browser so the user is signed out on the frontend too.
+    const cookieStore = await cookies()
+    for (const { name } of cookieStore.getAll()) {
+        if (name.startsWith(IDENTITY_COOKIE_PREFIX)) cookieStore.delete(name)
+    }
+
+    redirect("/")
 }
 
 export async function register(prevState: RegisterFormState, formData: FormData): Promise<RegisterFormState> {
@@ -170,8 +193,7 @@ export async function forgotPassword(prevState: ForgotPasswordFormState, formDat
         return { error: 'We could not reach the server. Please try again shortly.', email }
     }
 
-    // A 404 means no account uses this email. Show the same confirmation anyway,
-    // so the form can't be used to find out which emails are registered.
+    // A 404 means no account uses this email. Show the same confirmation anyway, so the form can't be used to find out which emails are registered.
     if (response.ok || response.status === 404) {
         return { sent: true, email }
     }
@@ -189,7 +211,7 @@ export async function forgotPassword(prevState: ForgotPasswordFormState, formDat
  * Re-issue it on the frontend response so later browser calls
  * (e.g. /api/voting/parties with credentials: "include") are authenticated.
  */
-async function forwardSetCookies(response: Response) {
+async function forwardSetCookies(response: Response): Promise<void> {
     const cookieStore = await cookies()
 
     for (const header of response.headers.getSetCookie()) {
