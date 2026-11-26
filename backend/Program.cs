@@ -44,7 +44,10 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     using var scope = app.Services.CreateScope();
-    scope.ServiceProvider.GetRequiredService<ApplicationDbContext>().Database.Migrate();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    // Integration tests swap in the in-memory provider, which has no migrations (they call EnsureCreated instead).
+    if (db.Database.IsRelational()) db.Database.Migrate();
 }
 
 // Configure the HTTP request pipeline.
