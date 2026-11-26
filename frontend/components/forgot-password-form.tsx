@@ -5,8 +5,8 @@ import { useActionState, useState } from 'react'
 import { KeyRound, Mail } from 'lucide-react'
 import { forgotPassword } from '@/app/actions/auth'
 import { ForgotPasswordFormState } from '@/lib/definitions'
-import { AuthCard, AuthCardHeader } from '@/components/auth-shell'
-import { FormAlert, SubmitButton, TextField } from '@/components/auth-fields'
+import { Panel, PanelHeader } from '@/components/panel'
+import { FormAlert, SubmitButton, TextField } from '@/components/form-fields'
 
 const initialState: ForgotPasswordFormState = {}
 
@@ -22,8 +22,8 @@ function ForgotPasswordFlow({ onRestart }: { onRestart: () => void }) {
 
   if (state.sent) {
     return (
-      <AuthCard>
-        <AuthCardHeader
+      <Panel>
+        <PanelHeader
           icon={<Mail className="size-6" aria-hidden />}
           title="Check your email"
           description="Your reset link is on its way."
@@ -54,13 +54,13 @@ function ForgotPasswordFlow({ onRestart }: { onRestart: () => void }) {
             </button>
           </p>
         </div>
-      </AuthCard>
+      </Panel>
     )
   }
 
   return (
-    <AuthCard>
-      <AuthCardHeader
+    <Panel>
+      <PanelHeader
         icon={<KeyRound className="size-6" aria-hidden />}
         title="Forgot your password?"
         description="Enter your email and we'll send you a link to reset it."
@@ -87,6 +87,6 @@ function ForgotPasswordFlow({ onRestart }: { onRestart: () => void }) {
           <Link href="/login" className="font-medium text-cei-blue hover:underline">Back to sign in</Link>
         </p>
       </form>
-    </AuthCard>
+    </Panel>
   )
 }

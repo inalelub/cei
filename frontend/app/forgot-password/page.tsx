@@ -1,10 +1,10 @@
-import { AuthShell } from "@/components/auth-shell"
+import { PageShell } from "@/components/page-shell"
 import { ForgotPasswordForm } from "@/components/forgot-password-form"
 
 export default function Page() {
   return (
-    <AuthShell widthClass="max-w-md">
+    <PageShell widthClass="max-w-md">
       <ForgotPasswordForm />
-    </AuthShell>
+    </PageShell>
   )
 }

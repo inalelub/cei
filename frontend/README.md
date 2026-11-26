@@ -87,7 +87,9 @@ frontend/
 ├── components/            # Shared UI components
 │   ├── ui/                # shadcn/ui primitives (button, card, input, etc.)
 │   ├── home/              # Landing page sections
-│   ├── auth-shell.tsx     # Auth page layout wrapper
+│   ├── page-shell.tsx     # Page chrome: header, centered column, footer
+│   ├── panel.tsx          # White content panel (Panel, PanelHeader)
+│   ├── form-fields.tsx    # TextField, PasswordField, SubmitButton, FormAlert
 │   ├── login-form.tsx     # Login form
 │   ├── register-form.tsx  # Registration form
 │   └── party-list.tsx     # Party listing component

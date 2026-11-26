@@ -5,8 +5,8 @@ import { useActionState } from 'react'
 import { UserRound } from 'lucide-react'
 import { login } from '@/app/actions/auth'
 import { LoginFormState } from '@/lib/definitions'
-import { AuthCard, AuthCardHeader } from '@/components/auth-shell'
-import { FormAlert, PasswordField, SubmitButton, TextField } from '@/components/auth-fields'
+import { Panel, PanelHeader } from '@/components/panel'
+import { FormAlert, PasswordField, SubmitButton, TextField } from '@/components/form-fields'
 
 const initialState: LoginFormState = {}
 
@@ -14,8 +14,8 @@ export function LoginForm() {
   const [state, action, pending] = useActionState(login, initialState)
 
   return (
-    <AuthCard>
-      <AuthCardHeader
+    <Panel>
+      <PanelHeader
         icon={<UserRound className="size-6" aria-hidden />}
         title="Sign in to your account"
         description="Sign in to view parties and cast your vote."
@@ -49,6 +49,6 @@ export function LoginForm() {
           <Link href="/register" className="font-medium text-cei-blue hover:underline">Register to vote</Link>
         </p>
       </form>
-    </AuthCard>
+    </Panel>
   )
 }

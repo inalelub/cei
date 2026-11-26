@@ -5,8 +5,8 @@ import { useActionState, useState } from 'react'
 import { UserPlus } from 'lucide-react'
 import { register } from '@/app/actions/auth'
 import { RegisterFormState } from '@/lib/definitions'
-import { AuthCard, AuthCardHeader } from '@/components/auth-shell'
-import { FormAlert, PasswordField, PasswordRules, SubmitButton, TextField } from '@/components/auth-fields'
+import { Panel, PanelHeader } from '@/components/panel'
+import { FormAlert, PasswordField, PasswordRules, SubmitButton, TextField } from '@/components/form-fields'
 
 const initialState: RegisterFormState = {
   errors: {},
@@ -27,8 +27,8 @@ export function RegisterForm() {
   const values = state?.values ?? initialState.values
 
   return (
-    <AuthCard>
-      <AuthCardHeader
+    <Panel>
+      <PanelHeader
         icon={<UserPlus className="size-6" aria-hidden />}
         title="Create your voter account"
         description="Enter your details as they appear on your South African ID."
@@ -73,6 +73,6 @@ export function RegisterForm() {
           <Link href="/login" className="font-medium text-cei-blue hover:underline">Sign in</Link>
         </p>
       </form>
-    </AuthCard>
+    </Panel>
   )
 }
