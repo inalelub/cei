@@ -21,5 +21,4 @@ public sealed class ApplicationUser : IdentityUser
     public bool HasVoted { get; set; }
 
     public Address? Address { get; set; }
-    public Vote? Vote { get; set; }
 }

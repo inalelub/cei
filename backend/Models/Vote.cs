@@ -1,25 +1,20 @@
 using System.ComponentModel.DataAnnotations;
-using backend.Data;
 
 namespace backend.Models;
 
 /// <summary>
-/// Represents a vote count by a user   
+/// An anonymous ballot. It records which party received the vote, but not who cast it;
+/// whether a user has voted is tracked separately by <see cref="backend.Data.ApplicationUser.HasVoted"/>.
 /// </summary>
 public class Vote
 {
     [Key]
     public int Id { get; set; }
 
-    // When the vote was cast (UTC)
+    // When the vote was cast (UTC), rounded down to the hour so it can't be matched to a voter by timing
     public DateTime CastAt { get; set; }
-    
-    // Relationship between ApplicationUser & Vote [One-To-One : Each voter can have only one vote & each vote belongs to exactly one voter]
-    public string? ApplicationUserId { get; set; } // optional foreign key property
-    public virtual ApplicationUser? ApplicationUser { get; set; } // optional reference navigation to principal
-    
+
     // Relationship between Party & Vote [One-To-Many : One party can receive many votes but each vote is cast for exactly one party]
     public int? PartyId { get; set; }
     public virtual Party? Party { get; set; }
-    
 }

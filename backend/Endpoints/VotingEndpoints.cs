@@ -70,32 +70,25 @@ public static class VotingEndpoints
                 return TypedResults.NotFound();
             }
 
-            if (registeredUser.HasVoted)
+            // Flag the user and store the ballot together, or not at all, so HasVoted always matches the vote count.
+            await using var transaction = await db.Database.BeginTransactionAsync();
+
+            // Atomic claim: the database flips HasVoted only if it is still false, so of several simultaneous requests exactly one gets a row back. This is the only duplicate-vote guard, because Vote rows carry no user id.
+            var claimed = await db.Users.Where(u => u.Id == registeredUser.Id && !u.HasVoted)
+                .ExecuteUpdateAsync(s => s.SetProperty(u => u.HasVoted, true));
+
+            if (claimed == 0)
             {
                 logger.LogWarning("Duplicate vote attempt by user {UserId}", registeredUser.Id);
                 return TypedResults.Conflict("The user has voted");
             }
 
-            db.Votes.Add(new Vote
-            {
-                ApplicationUserId = registeredUser.Id,
-                PartyId = partyId.Value,
-                CastAt = DateTime.UtcNow
-            });
-            registeredUser.HasVoted = true;
+            db.Votes.Add(new Vote { PartyId = partyId.Value, CastAt = TruncateToHour(DateTime.UtcNow) });
+            await db.SaveChangesAsync();
+            await transaction.CommitAsync();
 
-            try
-            {
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateException ex)
-            {
-                // Two simultaneous requests can both pass the HasVoted check; the unique index on Vote.ApplicationUserId stops the second.
-                logger.LogWarning(ex, "Duplicate vote blocked by the database for user {UserId}", registeredUser.Id);
-                return TypedResults.Conflict("The user has voted");
-            }
-
-            logger.LogInformation("Vote submitted successfully by user {UserId}", registeredUser.Id);
+            // No user id here: a timestamped log line naming the voter could be matched to the ballot.
+            logger.LogInformation("Vote submitted successfully");
             return TypedResults.Created();
         }
         
@@ -125,8 +118,6 @@ public static class VotingEndpoints
             return TypedResults.Ok(new VotingStatsDto(totalVotes, totalUsers, totalVotedUsers, totalUsers - totalVotedUsers, turnout));
         }
 
-
-
         // Look the user up by their id claim; Identity.Name is the UserName, which is not always the email.
         static Task<ApplicationUser?> FindCurrentUser(ApplicationDbContext db, ClaimsPrincipal principal)
         {
@@ -135,5 +126,7 @@ public static class VotingEndpoints
         }
 
         static PartyDto ToDto(Party p) => new(p.Id, p.PartyName, p.PartyAbbreviation.ToString(), p.PartyUrl, p.LogoUrl);
+        
+        static DateTime TruncateToHour(DateTime value) => new(value.Year, value.Month, value.Day, value.Hour, 0, 0, value.Kind);
     }
 }
