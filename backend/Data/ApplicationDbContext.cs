@@ -56,7 +56,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         });
 
         // Relationships 
-        modelBuilder.Entity<ApplicationUser>().HasOne(v => v.Vote).WithOne(a => a.ApplicationUser).HasForeignKey<Vote>(v => v.ApplicationUserId).IsRequired(false);
         modelBuilder.Entity<ApplicationUser>().HasOne(v => v.Address).WithOne(a => a.ApplicationUser).HasForeignKey<Address>(v => v.ApplicationUserId).IsRequired(false);
         modelBuilder.Entity<Party>().HasMany(v => v.Votes).WithOne(a => a.Party).HasForeignKey(a => a.PartyId).IsRequired(false);
 

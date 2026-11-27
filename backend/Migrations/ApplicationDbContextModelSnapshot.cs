@@ -450,9 +450,6 @@ namespace backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("CastAt")
                         .HasColumnType("datetime2");
 
@@ -460,10 +457,6 @@ namespace backend.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId")
-                        .IsUnique()
-                        .HasFilter("[ApplicationUserId] IS NOT NULL");
 
                     b.HasIndex("PartyId");
 
@@ -532,15 +525,9 @@ namespace backend.Migrations
 
             modelBuilder.Entity("backend.Models.Vote", b =>
                 {
-                    b.HasOne("backend.Data.ApplicationUser", "ApplicationUser")
-                        .WithOne("Vote")
-                        .HasForeignKey("backend.Models.Vote", "ApplicationUserId");
-
                     b.HasOne("backend.Models.Party", "Party")
                         .WithMany("Votes")
                         .HasForeignKey("PartyId");
-
-                    b.Navigation("ApplicationUser");
 
                     b.Navigation("Party");
                 });
@@ -548,8 +535,6 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Data.ApplicationUser", b =>
                 {
                     b.Navigation("Address");
-
-                    b.Navigation("Vote");
                 });
 
             modelBuilder.Entity("backend.Models.Party", b =>
